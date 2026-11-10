@@ -20,7 +20,7 @@ Les aides sont disponibles dès la première consigne. Après une erreur, le pro
 python3 serve.py
 ```
 
-Ouvrir <http://localhost:8765>. Aucun gestionnaire de paquets ni compilation nécessaire. Choisir MS ou GS dans l’atelier, puis les activités, le professeur et le bateau. Le prénom est facultatif. Les consignes et les modèles restent visibles si le son est coupé ou indisponible.
+Ouvrir <http://localhost:8765>. Aucun gestionnaire de paquets ni compilation nécessaire. L’enfant peut choisir directement L’île des lettres ou Le trésor à compter. Le coin des parents regroupe le choix MS / GS, le professeur et le bateau. Le prénom est facultatif. Les consignes et les modèles restent visibles si le son est coupé ou indisponible.
 
 La synthèse vocale dépend des voix du navigateur et du système : une voix française est recommandée. Le test du son et le choix de voix se trouvent dans l’atelier. Les données sont enregistrées sur cet appareil dans `petitesIlesMagiques.v1`, séparément de la version CP / CE1. Les images et polices sont locales.
 

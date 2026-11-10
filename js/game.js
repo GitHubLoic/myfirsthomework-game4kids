@@ -1494,15 +1494,21 @@ function renderHome() {
   app.innerHTML = `<section class="home art-home">
     <header class="home-nav"><a class="home-brand" href="#">${nauticalIcon('compass')} <span>Les Petites Îles Magiques</span></a><button class="btn ghost home-map" type="button">Ma carte ${nauticalIcon('arrow')}</button></header>
     <div class="home-hero">
-      <div class="hero-copy"><span class="eyebrow">MATERNELLE • MOYENNE ET GRANDE SECTION</span>
-        <h1 class="title">De grandes<br>découvertes.<br><span>À ton rythme.</span></h1>
-        <p class="subtitle">Un bateau, des lettres et des trésors à compter.<br>On découvre ensemble, pas à pas !</p>
-        <div class="home-actions"><button class="btn big go-btn">C’est parti ! ${nauticalIcon('arrow')}</button><a class="prepare-link" href="#preparation">Préparer mon voyage ${nauticalIcon('settings')}</a></div>
+      <div class="hero-copy"><span class="eyebrow">MON PREMIER VOYAGE • MS / GS</span>
+        <h1 class="title">À l’abordage,<br><span>petit capitaine !</span></h1>
+        <p class="subtitle">Des lettres à découvrir.<br>Des trésors à compter.</p>
+        <div class="home-actions"><button class="btn big go-btn">On embarque ! ${nauticalIcon('arrow')}</button><a class="prepare-link" href="#preparation">Coin des parents ${nauticalIcon('settings')}</a></div>
         <div class="hero-guide">${profSays(esc(profLine('hello')), 'happy')}</div>
       </div>
-      <div class="hero-art" aria-hidden="true"><img class="hero-island" src="assets/marine/tropical.webp" alt="" width="1448" height="1086"><div class="hero-boat">${boatSVG(S.boat)}</div><span class="hero-stamp">La curiosité<br>nous fait grandir ${nauticalIcon('star')}</span></div>
+      <div class="hero-art" aria-hidden="true"><img class="hero-island" src="assets/marine/tropical.webp" alt="" width="1448" height="1086"><div class="hero-boat">${boatSVG(S.boat)}</div><span class="hero-stamp">Cap sur les<br>découvertes ! ${nauticalIcon('star')}</span></div>
     </div>
-    <div class="preparation-head" id="preparation"><span class="eyebrow">L’ATELIER DU CAPITAINE</span><h2>On prépare ton voyage ?</h2><p>Choisis ton équipage et personnalise ton aventure.</p></div>
+    <div class="little-adventures" aria-label="Choisis ton aventure">
+      <div class="little-adventures-title"><span class="eyebrow">À TOI DE JOUER</span><h2>On découvre quoi ?</h2></div>
+      <button class="adventure-pick letters-pick" data-mode="lecture"><span class="adventure-toy" aria-hidden="true"><i>A</i><i>B</i><i>C</i></span><span><b>L’île des lettres</b><small>Écoute, regarde et retrouve !</small></span><span class="adventure-arrow" aria-hidden="true">➜</span></button>
+      <button class="adventure-pick numbers-pick" data-mode="maths"><span class="adventure-toy" aria-hidden="true">🐚<i>1 2 3</i></span><span><b>Le trésor à compter</b><small>Touche, compte et embarque !</small></span><span class="adventure-arrow" aria-hidden="true">➜</span></button>
+    </div>
+    <details class="parent-corner" id="preparation"><summary>${nauticalIcon('settings')} Le coin des parents <span>MS / GS, bateau et compagnons</span></summary>
+    <div class="preparation-head"><span class="eyebrow">L’ATELIER DU CAPITAINE</span><h2>On prépare ton voyage ?</h2><p>Choisis ton équipage et personnalise ton aventure.</p></div>
     <div class="setup">
       <fieldset class="setup-section captain-settings"><legend>${nauticalIcon('compass')} Le capitaine, c’est toi</legend>
         <label class="field"><span>Ton prénom</span><input id="name" maxlength="14" autocomplete="off" value="${esc(S.name)}"></label>
@@ -1530,9 +1536,12 @@ function renderHome() {
       </fieldset>
     </div>
     <div class="home-bottom"><button class="btn big go-btn">Larguer les amarres ! ${nauticalIcon('arrow')}</button><p>Ton aventure est sauvegardée sur cet appareil.</p></div>
+    </details>
     <footer class="game-footer">Les Petites Îles Magiques <span>•</span> Un peu de magie, beaucoup de découvertes.<details><summary>Crédits des illustrations pédagogiques</summary><p>Pictogrammes Twemoji, Twitter et autres contributeurs, <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>.</p></details></footer>
   </section>`;
 
+  app.querySelectorAll('.adventure-pick').forEach((button) => button.addEventListener('click', () => { S.mode = button.dataset.mode; save(); SFX.good(); renderMap(); }));
+  app.querySelector('.prepare-link').addEventListener('click', () => { app.querySelector('.parent-corner').open = true; });
   app.querySelector('#name').addEventListener('input', (e) => { S.name = e.target.value.trim(); S.nameSay = ''; save();
     const say = app.querySelector('#name-say'); say.value = ''; say.placeholder = S.name;
   });
@@ -1670,7 +1679,7 @@ function renderMap() {
     <p class="chart-notice" role="status" aria-live="polite"></p>
 
   </section>`;
-  app.querySelector('#btn-home').addEventListener('click', () => { SFX.click(); renderHome(); document.getElementById('preparation').scrollIntoView({ block: 'start' }); });
+  app.querySelector('#btn-home').addEventListener('click', () => { SFX.click(); renderHome(); document.getElementById('preparation').open = true; document.getElementById('preparation').scrollIntoView({ block: 'start' }); });
   app.querySelector('#btn-continue').addEventListener('click', () => { SFX.good(); startWorld(destination); });
   let noticeTimer;
   app.querySelectorAll('.world-card').forEach((c) => c.addEventListener('click', () => {

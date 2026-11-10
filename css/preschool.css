@@ -41,3 +41,97 @@ button:focus-visible { outline: 4px solid #195fc0; outline-offset: 5px; }
 .marine-voyage .exercise-meta { width: 100%; }
 /* Le bateau reste dans le décor, derrière les consignes et les manipulations. */
 .marine-voyage .stage { z-index: 4; }
+
+/* Un petit terrain de jeu, plutôt qu'une fiche d'exercices. */
+.art-home { background: radial-gradient(ellipse at 80% 20%, #fff0bc 0, transparent 35%), linear-gradient(#e8faf6, #d9f3e9 65%, #fff5dc); }
+.home-hero { margin-bottom: 30px; }
+.art-home .title { font-size: clamp(44px, 5.5vw, 76px); }
+.hero-stamp { background: #ffdf74; border: 3px solid #fff8dc; box-shadow: 0 4px 0 #c49341; font-weight: 600; }
+.hero-guide .bubble { font-size: 16px; }
+.little-adventures { max-width: 1050px; margin: 10px auto 48px; display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+.little-adventures-title { grid-column: 1 / -1; text-align: center; }
+.little-adventures h2 { font-size: 32px; margin: 5px 0 12px; }
+.adventure-pick { display: flex; align-items: center; gap: 18px; text-align: left; color: #193858; border: 3px solid #fffdf0; border-radius: 30px; padding: 24px; cursor: pointer; box-shadow: 0 7px 0 #98bcae, 0 12px 22px #3f77611a; background: #fff9df; transition: transform .2s; }
+.adventure-pick:hover { transform: translateY(-5px) rotate(-1deg); }
+.adventure-pick b { display: block; font: 600 25px Fredoka, sans-serif; }
+.adventure-pick small { display: block; margin-top: 8px; font-size: 14px; color: #496870; }
+.adventure-toy { min-width: 105px; height: 105px; display: flex; justify-content: center; align-items: center; position: relative; }
+.adventure-toy i { font: 600 42px Fredoka, sans-serif; font-style: normal; border-radius: 12px; background: #ffca6d; border: 2px solid #fff9e8; box-shadow: 0 4px #d99447; width: 48px; text-align: center; transform: rotate(-12deg); }
+.adventure-toy i:nth-child(2) { background: #a8dece; box-shadow: 0 4px #68ab9a; transform: rotate(12deg); margin: 0 -8px; z-index: 1; margin-top: 45px; }
+.adventure-toy i:nth-child(3) { background: #f7afae; box-shadow: 0 4px #d18182; }
+.numbers-pick { background: #dff3f0; }
+.numbers-pick .adventure-toy { font-size: 75px; }
+.numbers-pick .adventure-toy > .picture { width: 78px; height: 78px; transform: rotate(-14deg); }
+.numbers-pick .adventure-toy i { position: absolute; bottom: -4px; right: 0; width: auto; padding: 4px 10px; font-size: 24px; transform: rotate(8deg); background: #ffe08c; }
+.adventure-arrow { margin-left: auto; font-size: 28px; }
+.parent-corner { max-width: 1050px; margin: 0 auto; border-top: 2px dashed #a8c9b9; padding-top: 20px; }
+.parent-corner > summary { display: flex; align-items: center; gap: 10px; cursor: pointer; color: #466b6c; font-size: 17px; padding: 15px 0; }
+.parent-corner > summary::after { content: '+'; margin-left: auto; font-size: 26px; }
+.parent-corner[open] > summary::after { content: '−'; }
+.parent-corner > summary span { font-size: 13px; opacity: .8; }
+.parent-corner .preparation-head { margin-top: 30px; }
+.game-footer { margin-top: 30px; }
+/* Des objets à manipuler : médaille modèle, îlots et cale en bois. */
+.marine-voyage .room-body { position: relative; background: linear-gradient(170deg, #fffdf1, #fff0ce); border: 4px solid #fffbed; box-shadow: 0 7px 0 #dbbd80, 0 15px 35px #005c7533; border-radius: 36px; gap: 12px; padding: 22px; }
+.marine-voyage .exercise-meta { background: none; border: 0; color: #fff; font-weight: 600; padding: 0 8px; text-shadow: 0 1px 3px #075367; }
+.exercise-meta > span:last-child { color: #193858; text-shadow: none; }
+.little-model { margin: 0 auto 5px; }
+.little-model > span { font-size: 15px; color: #7b6845; }
+.little-model > .little-letter { display: inline-block; min-width: 110px; padding: 0 18px; margin-top: 10px; background: #fff; border: 3px solid #f3cc6e; border-radius: 26px; box-shadow: 0 5px #e7bb58; transform: rotate(-3deg); color: #c26338; }
+.little-model .hear-letter { display: flex; align-items: center; margin: 14px auto 0; box-shadow: none; background: none; border: 0; font-size: 14px; min-height: 42px; }
+.little-choices { width: 100%; gap: 16px; margin: 8px 0 12px; }
+.little-choice { min-width: 125px; min-height: 130px; padding: 10px 24px 30px; position: relative; border: 0; border-radius: 0; box-shadow: none; background: url('../assets/marine/tropical.webp') center bottom / 100% auto no-repeat; color: #193858; text-shadow: 0 2px #fff; font-size: 64px; }
+.little-choice::before { content: ''; position: absolute; z-index: -1; width: 78px; height: 78px; border: 3px solid #fff9e6; background: #fff4c7; border-radius: 24px; left: 50%; top: 3px; transform: translateX(-50%) rotate(5deg); box-shadow: 0 4px #d6a952; }
+.little-choice { isolation: isolate; }
+.little-choice:hover { background: url('../assets/marine/tropical.webp') center bottom / 100% auto no-repeat; transform: translateY(-5px); }
+.little-choice.little-help, .little-choice.little-correct { background: url('../assets/marine/tropical.webp') center bottom / 100% auto no-repeat; box-shadow: none; }
+.little-choice.little-help::before { background: #ffe185; box-shadow: 0 0 0 5px #ffcc5799, 0 4px #d6a952; }
+.little-choice.little-correct::before { background: #b8edd0; border-color: #51a878; }
+.little-target { display: grid; place-items: center; width: 80px; height: 80px; margin: 12px auto; border-radius: 50%; background: #ffe18a; border: 4px solid #fff6ce; color: #84561c; box-shadow: 0 5px #d6a650; font-size: 52px; }
+.little-count-model { display: grid; grid-template-columns: repeat(5, 36px); gap: 6px; justify-content: center; margin: 10px auto; }
+.little-count-model > span { min-width: 0; font-size: 29px; }
+.little-slots { width: fit-content; grid-template-columns: repeat(5, 64px); gap: 9px; padding: 18px 20px 24px; margin: 10px auto 0; background: repeating-linear-gradient(0deg, #ba7c49 0 47px, #ab6e40 48px 50px); border: 5px solid #dfae73; border-bottom: 9px solid #8f5c37; border-radius: 18px 18px 45% 45% / 18px 18px 30px 30px; box-shadow: 0 6px 0 #bfdfd5; }
+.little-slot { height: 60px; border: 2px solid #edd3a5; background: #ffedc8; border-radius: 50%; box-shadow: inset 0 3px #e7c38c; color: #a7804e; }
+.little-slot.filled { background: #fff8df; border-color: #fff8df; }
+.little-shells { margin: 10px auto; padding: 12px; }
+.little-shell { background: #fff8e5; border: 0; box-shadow: 0 4px #e8c88c; border-radius: 50%; }
+.little-shell.counted { box-shadow: 0 4px #77b8a9; }
+.little-status { margin: 8px 0; font-size: 16px; color: #66785f; }
+.little-check { font-size: 22px; min-width: 190px; justify-content: center; margin: 6px auto; }
+@media (max-width: 600px) {
+  .home-nav { padding: 16px 0; }
+  .home-hero { position: relative; margin: 8px auto 24px; gap: 0; }
+  .hero-copy { display: contents; }
+  .hero-copy > .eyebrow { order: 0; font-size: 9px; }
+  .art-home .title { order: 1; font-size: 42px; margin: 12px 0 8px; }
+  .art-home .subtitle { order: 2; font-size: 17px; }
+  .hero-art { order: 3; padding: 0 0 22px; width: 80%; margin: -3px auto 4px; }
+  .hero-stamp { font-size: 11px; padding: 10px; bottom: 3px; left: -8%; }
+  .home-actions { order: 4; margin: 8px 0 14px; gap: 14px; }
+  .hero-guide { order: 5; }
+  .hero-guide .prof-wrap { width: 80px; }
+  .hero-guide .bubble { font-size: 13px; }
+  .little-adventures { grid-template-columns: 1fr; gap: 16px; margin-bottom: 28px; }
+  .little-adventures h2 { font-size: 28px; }
+  .adventure-pick { padding: 15px; gap: 12px; border-radius: 26px; }
+  .adventure-pick b { font-size: 21px; }
+  .adventure-pick small { font-size: 12px; }
+  .adventure-toy { min-width: 88px; height: 80px; }
+  .adventure-toy i { width: 38px; font-size: 32px; }
+  .adventure-toy i:nth-child(2) { margin-top: 27px; }
+  .adventure-arrow { font-size: 23px; }
+  .parent-corner > summary { flex-wrap: wrap; font-size: 15px; }
+  .parent-corner > summary span { display: none; }
+  .marine-voyage .room-body { padding: 16px 10px; border-radius: 28px; gap: 8px; }
+  .little-choice { min-width: 91px; min-height: 111px; font-size: 53px; padding: 8px 16px 28px; }
+  .little-choice::before { width: 65px; height: 65px; border-radius: 20px; }
+  .little-choices { gap: 5px; }
+  .little-model > .little-letter { font-size: 62px; min-width: 90px; }
+  .little-slots { grid-template-columns: repeat(5, minmax(0, 45px)); gap: 8px; padding: 12px 10px 18px; }
+  .little-slot { height: 45px; font-size: 28px; }
+  .little-target { width: 64px; height: 64px; font-size: 42px; margin: 9px auto; }
+  .little-count-model { grid-template-columns: repeat(5, 30px); gap: 5px; }
+  .little-count-model .picture { width: 28px; height: 28px; }
+  .little-shells { gap: 9px; }
+  .little-status { font-size: 14px; }
+}

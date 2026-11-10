@@ -8,6 +8,7 @@ const assert = require('node:assert/strict');
   await page.goto('http://127.0.0.1:8765');
   await page.waitForSelector('.go-btn');
   assert.equal(await page.evaluate(() => S.level), 'MS');
+  await page.locator('.parent-corner > summary').click();
   await page.locator('#name').fill('Camille');
   await page.reload();
   assert.equal(await page.locator('#name').inputValue(), 'Camille');

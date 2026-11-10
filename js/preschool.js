@@ -15,15 +15,15 @@ function registerPreschoolRooms() {
       return { answer, options, lowercase };
     },
     instruction: (q) => q.lowercase
-      ? `Voici la lettre ${letterName(q.answer)}. Retrouve sa petite lettre avec le modèle.`
-      : `Voici la lettre ${letterName(q.answer)}. Touche la même lettre.`,
+      ? `Voici la lettre ${q.answer}. Retrouve sa petite lettre avec le modèle.`
+      : `Voici la lettre ${q.answer}. Touche la même lettre.`,
     hint: (q) => ({
       show: `Regarde le modèle : ${q.answer}${q.lowercase ? ` et ${q.answer.toLowerCase()}` : ''}. Cherche la même forme.`,
       say: `C'est la lettre ${letterName(q.answer)}. Regarde le modèle, puis retrouve la même forme.`,
       html: `<div class="little-letter">${q.lowercase ? `${q.answer} → ${q.answer.toLowerCase()}` : q.answer}</div>`,
     }),
     render(body, q, api) {
-      body.append(h(`<div class="little-model"><span>Ton modèle</span><div class="little-letter">${q.answer}${q.lowercase ? ` <span>→</span> ${q.answer.toLowerCase()}` : ''}</div><button class="btn ghost hear-letter" type="button">${nauticalIcon('sound')} Écouter la lettre</button></div>`));
+      body.append(h(`<div class="little-model"><span>Regarde bien…</span><div class="little-letter">${q.answer}${q.lowercase ? ` <span>→</span> ${q.answer.toLowerCase()}` : ''}</div><button class="btn ghost hear-letter" type="button">${nauticalIcon('sound')} Écouter la lettre</button></div>`));
       body.querySelector('.hear-letter').onclick = () => speak(`La lettre ${letterName(q.answer)}`);
       const choices = h('<div class="little-choices" role="group" aria-label="Choisis la même lettre"></div>');
       let solved = false;
@@ -59,7 +59,7 @@ function registerPreschoolRooms() {
   });
   ROOM_TYPES.petitCompte = {
     subject: 'maths', make: numberQuestion,
-    instruction: () => 'Combien de coquillages ? Touche-les pour compter, puis choisis le nombre.',
+    instruction: () => 'Combien de coquillages ? Touche les coquillages pour compter.',
     hint: countHint,
     render(body, q, api) {
       const shellBox = h('<div class="little-shells" role="group" aria-label="Coquillages à compter"></div>');
@@ -106,14 +106,14 @@ function registerPreschoolRooms() {
   };
   ROOM_TYPES.petiteCollection = {
     subject: 'maths', make: numberQuestion,
-    instruction: (q) => `Prépare ${smallNumber(q.n)} coquillages dans le bateau. Touche les cases pour les remplir.`,
+    instruction: (q) => `Prépare ${smallNumber(q.n)} coquillages dans le bateau. Touche les places pour les remplir.`,
     hint: (q) => ({
       show: `Il faut ${q.n} coquillages. Remplis une case pour chaque coquillage du modèle.`,
       say: `Il faut ${smallNumber(q.n)} coquillages. Remplis ${smallNumber(q.n)} cases, puis touche le bouton du bateau.`,
       html: countHint(q).html,
     }),
     render(body, q, api) {
-      body.append(h(`<div class="little-model"><span>À mettre dans ton bateau</span><strong class="little-target">${q.n}</strong><div class="little-count-model" aria-label="Modèle : ${q.n} coquillages">${Array.from({ length: q.n }, () => '<span>🐚</span>').join('')}</div></div>`));
+      body.append(h(`<div class="little-model"><span>Ton trésor à embarquer</span><strong class="little-target">${q.n}</strong><div class="little-count-model" aria-label="Modèle : ${q.n} coquillages">${Array.from({ length: q.n }, () => '<span>🐚</span>').join('')}</div></div>`));
       const slots = h('<div class="little-slots" role="group" aria-label="Remplis ton bateau"></div>');
       const selected = new Set();
       let solved = false;
@@ -133,7 +133,7 @@ function registerPreschoolRooms() {
         };
         slots.append(button);
       }
-      const check = h(`<button class="btn go little-check" type="button">${nauticalIcon('anchor')} Mon bateau est prêt !</button>`);
+      const check = h(`<button class="btn go little-check" type="button">${nauticalIcon('anchor')} En route !</button>`);
       check.onclick = () => {
         if (solved) return;
         if (selected.size === q.n) {
