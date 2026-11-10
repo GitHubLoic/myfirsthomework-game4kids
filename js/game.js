@@ -1504,7 +1504,7 @@ function renderHome() {
     </div>
     <div class="little-adventures" aria-label="Choisis ton aventure">
       <div class="little-adventures-title"><span class="eyebrow">À TOI DE JOUER</span><h2>On découvre quoi ?</h2></div>
-      <button class="adventure-pick letters-pick" data-mode="lecture"><span class="adventure-toy" aria-hidden="true"><i>A</i><i>B</i><i>C</i></span><span><b>L’île des lettres</b><small>Écoute, regarde et retrouve !</small></span><span class="adventure-arrow" aria-hidden="true">➜</span></button>
+      <button class="adventure-pick letters-pick" data-mode="lecture"><span class="adventure-toy" aria-hidden="true"><i>A</i><i>B</i><i>C</i></span><span><b>L’île des lettres</b><small>Écoute et retrouve la lettre !</small></span><span class="adventure-arrow" aria-hidden="true">➜</span></button>
       <button class="adventure-pick numbers-pick" data-mode="maths"><span class="adventure-toy" aria-hidden="true">🐚<i>1 2 3</i></span><span><b>Le trésor à compter</b><small>Touche, compte et embarque !</small></span><span class="adventure-arrow" aria-hidden="true">➜</span></button>
     </div>
     <details class="parent-corner" id="preparation"><summary>${nauticalIcon('settings')} Le coin des parents <span>MS / GS, bateau et compagnons</span></summary>
@@ -1522,7 +1522,7 @@ function renderHome() {
         </div></div>
       </fieldset>
       <fieldset class="setup-section learning-settings"><legend>${nauticalIcon('book')} Tes découvertes</legend>
-        <p>MS : lettres capitales et collections de 1 à 5.<br>GS : capitales, minuscules et collections de 1 à 10.</p><p>Modèle visible, voix à réécouter et aide à tout moment. Aucun chronomètre : chaque essai aide à apprendre.</p>
+        <p>MS : lettres capitales et collections de 1 à 5.<br>GS : capitales, minuscules et collections de 1 à 10.</p><p>Image repère, lettre à écouter et aide à tout moment. Aucun chronomètre : chaque essai aide à apprendre.</p>
         <div class="field"><span>Les épreuves</span>${seg('mode', [['mix', 'Tout explorer'], ['lecture', 'Les lettres'], ['maths', 'Je compte']])}</div>
       </fieldset>
       <fieldset class="setup-section crew-settings"><legend>${nauticalIcon('star')} Ton compagnon d’aventure</legend>
@@ -1894,9 +1894,9 @@ function enterStep() {
   const instr = T.instruction(q);
   say(instr);
   RUN.greeted = true;
-  setTimeout(() => speak(instr), 300);
+  setTimeout(() => { if (el.isConnected) speak(T.listen ? T.listen(q) : instr); }, 300);
 
-  el.querySelector('.say').addEventListener('click', () => speak(bubbleText.textContent));
+  el.querySelector('.say').addEventListener('click', () => speak(T.listen && bubbleText.textContent === instr ? T.listen(q) : bubbleText.textContent, { force: true }));
   hintBtn.addEventListener('click', () => {
     const hi = T.hint(q);
     profMood(el, 'think', 4000);

@@ -1,10 +1,23 @@
 'use strict';
 
-// Les 26 lettres sont disponibles dans les deux niveaux. Le modèle reste visible.
+// La lettre est entendue et associée à une image ; sa forme est révélée uniquement par l’aide.
 const PRESCHOOL_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 const LETTER_NAMES = ['a', 'bé', 'cé', 'dé', 'e', 'effe', 'gé', 'ache', 'i', 'ji', 'ka', 'elle', 'emme', 'enne', 'o', 'pé', 'ku', 'erre', 'esse', 'té', 'u', 'vé', 'double vé', 'iks', 'i grec', 'zède'];
 const letterName = (letter) => LETTER_NAMES[PRESCHOOL_ALPHABET.indexOf(letter)];
 const smallNumber = (n) => ['zéro', 'un', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf', 'dix'][n];
+
+const LETTER_CLUES = {
+  A: ['abeille', '1f41d'], B: ['bateau', '26f5'], C: ['carotte', '1f955'],
+  D: ['dauphin', '1f42c'], E: ['escargot', '1f40c'], F: ['fleur', '1f338'],
+  G: ['grenouille', '1f438'], H: ['hibou', '1f989'], I: ['île', '1f3dd'],
+  J: ['jus', '1f9c3'], K: ['koala', '1f428'], L: ['lion', '1f981'],
+  M: ['mouton', '1f411'], N: ['nuage', '1f327'], O: ['ours', '1f43b'],
+  P: ['pomme', '1f34e'], Q: ['quille', '1f3b3'], R: ['renard', '1f98a'],
+  S: ['soleil', '2600'], T: ['tortue', '1f422'], U: ['usine', '1f3ed'],
+  V: ['vache', '1f42e'], W: ['wagon', '1f683'], X: ['xylophone', 'xylophone'],
+  Y: ['yoyo', '1fa80'], Z: ['zèbre', '1f993'],
+};
+const letterPrompt = (q) => `Écoute : la lettre ${letterName(q.answer)}, comme au début de ${LETTER_CLUES[q.answer][0]}. Retrouve ${q.lowercase ? 'la lettre minuscule' : 'la lettre'} sur une île.`;
 
 function registerPreschoolRooms() {
   const letters = (lowercase) => ({
@@ -14,22 +27,22 @@ function registerPreschoolRooms() {
       const options = shuffle([answer, ...shuffle(PRESCHOOL_ALPHABET.filter((l) => l !== answer)).slice(0, level === 'GS' ? 2 : 1)]);
       return { answer, options, lowercase };
     },
-    instruction: (q) => q.lowercase
-      ? `Voici la lettre ${q.answer}. Retrouve sa petite lettre avec le modèle.`
-      : `Voici la lettre ${q.answer}. Touche la même lettre.`,
+    instruction: () => 'Écoute et retrouve la lettre sur une île.',
+    listen: letterPrompt,
     hint: (q) => ({
-      show: `Regarde le modèle : ${q.answer}${q.lowercase ? ` et ${q.answer.toLowerCase()}` : ''}. Cherche la même forme.`,
+      show: `Voici une aide : ${q.answer}${q.lowercase ? ` et ${q.answer.toLowerCase()}` : ''}. Retrouve cette lettre sur une île.`,
       say: `C'est la lettre ${letterName(q.answer)}. Regarde le modèle, puis retrouve la même forme.`,
       html: `<div class="little-letter">${q.lowercase ? `${q.answer} → ${q.answer.toLowerCase()}` : q.answer}</div>`,
     }),
     render(body, q, api) {
-      body.append(h(`<div class="little-model"><span>Regarde bien…</span><div class="little-letter">${q.answer}${q.lowercase ? ` <span>→</span> ${q.answer.toLowerCase()}` : ''}</div><button class="btn ghost hear-letter" type="button">${nauticalIcon('sound')} Écouter la lettre</button></div>`));
-      body.querySelector('.hear-letter').onclick = () => speak(`La lettre ${letterName(q.answer)}`);
-      const choices = h('<div class="little-choices" role="group" aria-label="Choisis la même lettre"></div>');
+      const [word, picture] = LETTER_CLUES[q.answer];
+      body.append(h(`<div class="little-model sound-clue"><span>Écoute bien…</span><button class="hear-letter clue-listen" type="button" aria-label="Écouter la lettre et le mot repère"><img class="letter-clue-picture" src="assets/pictures/${picture}.svg" alt="${word}" width="100" height="100"><span class="clue-listen-label">${nauticalIcon('sound')} Écouter</span></button><small>Comme au début de…</small></div>`));
+      body.querySelector('.hear-letter').onclick = () => speak(letterPrompt(q), { force: true });
+      const choices = h('<div class="little-choices" role="group" aria-label="Choisis la lettre entendue"></div>');
       let solved = false;
       q.options.forEach((letter) => {
         const display = q.lowercase ? letter.toLowerCase() : letter;
-        const button = h(`<button class="little-choice little-letter" type="button" aria-label="Lettre ${letter}">${display}</button>`);
+        const button = h(`<button class="little-choice little-letter" type="button" aria-label="Lettre ${letter}"><span class="letter-face">${display}</span></button>`);
         button.onclick = () => {
           if (solved) return;
           if (letter === q.answer) {
@@ -39,7 +52,7 @@ function registerPreschoolRooms() {
             speak(`Oui ! La lettre ${letterName(letter)} !`);
             api.success();
           } else {
-            api.fail(`Essayons ensemble. Cherche ${q.lowercase ? q.answer.toLowerCase() : q.answer}, comme le modèle.`);
+            api.fail(`Écoutons encore : ${letterName(q.answer)}, comme au début de ${word}. Regarde la lettre dans l’aide.`);
             choices.querySelectorAll('button').forEach((b) => b.classList.toggle('little-help', b.textContent === (q.lowercase ? q.answer.toLowerCase() : q.answer)));
           }
         };

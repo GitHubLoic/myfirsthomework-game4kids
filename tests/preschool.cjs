@@ -42,7 +42,8 @@ const assert = require('node:assert/strict');
       await page.locator('.hint').click();
       assert.ok(await page.locator('.hint-box').isVisible());
       if (type.startsWith('petite') && type !== 'petiteCollection') {
-        const model = (await page.locator('.little-model .little-letter').innerText()).trim().slice(-1);
+        assert.equal(await page.locator('.little-model .little-letter').count(), 0);
+        const model = (await page.locator('.hint-box .little-letter').innerText()).trim().slice(-1);
         const wrong = page.locator('.little-choice').filter({hasText: /./});
         const labels = await wrong.allTextContents();
         await wrong.nth(labels.findIndex(l => l !== model)).click();
@@ -79,7 +80,8 @@ const assert = require('node:assert/strict');
     await page.evaluate(() => {
       const type = RUN.steps[RUN.index].type;
       if (type === 'petiteLettre') {
-        const letter = document.querySelector('.little-model .little-letter').textContent.trim();
+        const word = document.querySelector('.letter-clue-picture').alt;
+        const letter = Object.entries(LETTER_CLUES).find(([, clue]) => clue[0] === word)[0];
         [...document.querySelectorAll('.little-choice')].find(b => b.textContent === letter).click();
       } else if (type === 'petitCompte') {
         const n = document.querySelectorAll('.little-shell').length;
