@@ -1,9 +1,9 @@
 'use strict';
 
 // ================= Sauvegarde =================
-const STORE_KEY = 'ilesMagiques.v1';
+const STORE_KEY = 'petitesIlesMagiques.v1';
 const DEFAULTS = {
-  name: 'Coleen', nameSay: 'Coline', level: 'CE1', mode: 'mix', sound: true, voice: true, prof: 'bulle', profVoices: {}, worlds: {},
+  name: '', nameSay: '', level: 'MS', mode: 'mix', sound: true, voice: true, prof: 'bulle', profVoices: {}, worlds: {},
   boat: { hull: '#e63946', sail: '#ffffff', pattern: 'rayures' },
   dailyWords: DAILY_WORDS, wordStats: {},
 };
@@ -1479,24 +1479,10 @@ function drawer(types) {
 const PLURAL_TYPES = ['indices'];
 
 function buildSequence(mode, count) {
-  const r = drawer(S.level === 'CE1' ? READING_TYPES.concat(PLURAL_TYPES) : READING_TYPES);
-  const m = drawer(S.level === 'CE1' ? MATHS_TYPES.concat(HUNDRED_TYPES) : MATHS_TYPES);
-  const seq = Array.from({ length: count }, (_, i) => {
-    if (mode === 'lecture') return r();
-    if (mode === 'maths') return m();
-    return i % 2 === 0 ? r() : m();
-  });
-  // les mots du jour reviennent à chaque voyage
-  if (!dailyWords().length) return seq;
-  if (mode === 'maths') seq[2] = pick(DAILY_TYPES);
-  else if (mode === 'lecture') { seq[0] = 'ecouteMot'; seq[2] = 'phraseTrou'; seq[4] = pick(DAILY_TYPES); }
-  else { seq[0] = 'ecouteMot'; seq[4] = 'phraseTrou'; }
-  // CE1 : le singulier / pluriel revient souvent
-  if (S.level === 'CE1' && mode !== 'maths') {
-    if (mode === 'lecture') seq[1] = pick(PLURAL_TYPES);
-    else if (!PLURAL_TYPES.includes(seq[2]) && Math.random() < 0.6) seq[2] = pick(PLURAL_TYPES);
-  }
-  return seq;
+  const letters = drawer(S.level === 'GS' ? ['petiteLettre', 'petitePaire'] : ['petiteLettre']);
+  const numbers = drawer(['petitCompte', 'petiteCollection']);
+  return Array.from({ length: count }, (_, i) =>
+    mode === 'lecture' ? letters() : mode === 'maths' ? numbers() : i % 2 === 0 ? letters() : numbers());
 }
 
 // ================= Écran d'accueil =================
@@ -1506,11 +1492,11 @@ function renderHome() {
     `<button data-v="${v}" class="${S[key] === v ? 'sel' : ''}">${label}</button>`).join('')}</div>`;
   document.getElementById('decor').innerHTML = '';
   app.innerHTML = `<section class="home art-home">
-    <header class="home-nav"><a class="home-brand" href="#">${nauticalIcon('compass')} <span>Les Îles Magiques</span></a><button class="btn ghost home-map" type="button">Ma carte ${nauticalIcon('arrow')}</button></header>
+    <header class="home-nav"><a class="home-brand" href="#">${nauticalIcon('compass')} <span>Les Petites Îles Magiques</span></a><button class="btn ghost home-map" type="button">Ma carte ${nauticalIcon('arrow')}</button></header>
     <div class="home-hero">
-      <div class="hero-copy"><span class="eyebrow">UNE PETITE AVENTURE, CHAQUE JOUR</span>
+      <div class="hero-copy"><span class="eyebrow">MATERNELLE • MOYENNE ET GRANDE SECTION</span>
         <h1 class="title">De grandes<br>découvertes.<br><span>À ton rythme.</span></h1>
-        <p class="subtitle">Un bateau, cinq mers et plein de trésors.<br>Apprendre devient une aventure !</p>
+        <p class="subtitle">Un bateau, des lettres et des trésors à compter.<br>On découvre ensemble, pas à pas !</p>
         <div class="home-actions"><button class="btn big go-btn">C’est parti ! ${nauticalIcon('arrow')}</button><a class="prepare-link" href="#preparation">Préparer mon voyage ${nauticalIcon('settings')}</a></div>
         <div class="hero-guide">${profSays(esc(profLine('hello')), 'happy')}</div>
       </div>
@@ -1521,7 +1507,7 @@ function renderHome() {
       <fieldset class="setup-section captain-settings"><legend>${nauticalIcon('compass')} Le capitaine, c’est toi</legend>
         <label class="field"><span>Ton prénom</span><input id="name" maxlength="14" autocomplete="off" value="${esc(S.name)}"></label>
         <div class="field"><span>Ça se prononce <small>(écris-le comme ça se dit)</small></span><div class="voice-pick"><input id="name-say" maxlength="20" autocomplete="off" value="${esc(S.nameSay)}" placeholder="${esc(S.name)}"><button class="seg-btn test-name" type="button">▶ Écouter</button></div></div>
-        <div class="field"><span>Ta classe</span>${seg('level', [['CP', 'CP'], ['CE1', 'CE1']])}</div>
+        <div class="field"><span>Ta classe</span>${seg('level', [['MS', 'Moyenne section'], ['GS', 'Grande section']])}</div>
       </fieldset>
       <fieldset class="setup-section boat-settings"><legend>${nauticalIcon('anchor')} Ton navire</legend>
         <div class="boat-maker"><div class="boat-preview"><div class="mini-sea"></div>${boatSVG(S.boat)}</div><div class="boat-opts">
@@ -1530,8 +1516,8 @@ function renderHome() {
         </div></div>
       </fieldset>
       <fieldset class="setup-section learning-settings"><legend>${nauticalIcon('book')} Tes découvertes</legend>
-        <label class="field"><span>Les mots du jour</span><small>Sépare les mots par des espaces.</small><textarea id="daily" rows="3" spellcheck="false">${esc(dailyWords().join(' '))}</textarea></label>
-        <div class="field"><span>Les épreuves</span>${seg('mode', [['mix', 'Tout explorer'], ['lecture', 'Lecture'], ['maths', 'Maths']])}</div>
+        <p>MS : lettres capitales et collections de 1 à 5.<br>GS : capitales, minuscules et collections de 1 à 10.</p><p>Modèle visible, voix à réécouter et aide à tout moment. Aucun chronomètre : chaque essai aide à apprendre.</p>
+        <div class="field"><span>Les épreuves</span>${seg('mode', [['mix', 'Tout explorer'], ['lecture', 'Les lettres'], ['maths', 'Je compte']])}</div>
       </fieldset>
       <fieldset class="setup-section crew-settings"><legend>${nauticalIcon('star')} Ton compagnon d’aventure</legend>
         <div class="prof-pick">${Object.entries(PROFS).map(([id, p]) => `<button class="prof-card ${S.prof === id ? 'sel' : ''}" data-id="${id}"><span class="prof-mini">${profSVG('idle', id)}</span><b>${p.name}</b><small>${p.desc}</small></button>`).join('')}</div>
@@ -1544,7 +1530,7 @@ function renderHome() {
       </fieldset>
     </div>
     <div class="home-bottom"><button class="btn big go-btn">Larguer les amarres ! ${nauticalIcon('arrow')}</button><p>Ton aventure est sauvegardée sur cet appareil.</p></div>
-    <footer class="game-footer">Les Îles Magiques <span>•</span> Un peu de magie, beaucoup de découvertes.<details><summary>Crédits des illustrations pédagogiques</summary><p>Pictogrammes Twemoji, Twitter et autres contributeurs, <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>.</p></details></footer>
+    <footer class="game-footer">Les Petites Îles Magiques <span>•</span> Un peu de magie, beaucoup de découvertes.<details><summary>Crédits des illustrations pédagogiques</summary><p>Pictogrammes Twemoji, Twitter et autres contributeurs, <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>.</p></details></footer>
   </section>`;
 
   app.querySelector('#name').addEventListener('input', (e) => { S.name = e.target.value.trim(); S.nameSay = ''; save();
@@ -1552,7 +1538,6 @@ function renderHome() {
   });
   app.querySelector('#name-say').addEventListener('input', (e) => { S.nameSay = e.target.value.trim(); save(); });
   app.querySelector('.test-name').addEventListener('click', () => speak(`Bravo ${S.name} !`));
-  app.querySelector('#daily').addEventListener('input', (e) => { S.dailyWords = e.target.value; save(); });
   app.querySelectorAll('.opt-row').forEach((row) => row.querySelectorAll('button').forEach((b) => b.addEventListener('click', () => {
     S.boat[row.dataset.k] = b.dataset.v; save(); SFX.pop();
     row.querySelectorAll('button').forEach((x) => x.classList.toggle('sel', x === b));
@@ -1661,7 +1646,7 @@ function renderMap() {
       <div class="hello">Ahoy ${esc(S.name || 'moussaillon')} !</div>
       <div class="star-count">⭐ ${totalStars()} <span>étoiles</span></div>
     </header>
-    <div class="chart-title"><h1>Les Îles <span>Magiques</span></h1><span class="title-star" aria-hidden="true">★</span></div>
+    <div class="chart-title"><h1>Les Petites Îles <span>Magiques</span></h1><span class="title-star" aria-hidden="true">★</span></div>
     <p class="chart-direction">Départ au niveau 1, puis on remonte les îles ↑</p>
     <div class="archipelago" aria-label="Carte des cinq mers">
     ${chartScenery()}
@@ -1683,11 +1668,7 @@ function renderMap() {
     <div class="chart-crew">${chartProfessor()}<p class="crew-bubble">Prêt,<br>capitaine ?</p></div>
     <div class="chart-departure"><button class="btn big chart-continue" id="btn-continue">${nextIdx < 0 ? 'Repartir à l’aventure' : 'Continuer l’aventure'} <span aria-hidden="true">➜</span></button><span class="chart-destination">Cap sur ${CHART_LABELS[destination.id]} !</span></div>
     <p class="chart-notice" role="status" aria-live="polite"></p>
-    ${dailyWords().length ? `<details class="words-board">
-      <summary>📚 Mes mots du jour</summary>
-      <div class="word-chips">${dailyWords().map((w) => `<span class="wchip ${wordMastery(w)}">${esc(w)}</span>`).join('')}</div>
-      <small><span class="wchip good">bien su</span> <span class="wchip learning">en cours</span> <span class="wchip hard">à revoir</span></small>
-    </details>` : ''}
+
   </section>`;
   app.querySelector('#btn-home').addEventListener('click', () => { SFX.click(); renderHome(); document.getElementById('preparation').scrollIntoView({ block: 'start' }); });
   app.querySelector('#btn-continue').addEventListener('click', () => { SFX.good(); startWorld(destination); });
@@ -1875,13 +1856,13 @@ function enterStep() {
   step.solved = false;
 
   const el = h(`<div class="room" data-subject="${T.subject}">
-    <div class="exercise-meta"><span>${nauticalIcon(T.subject === 'lecture' ? 'book' : 'compass')} ${T.subject === 'lecture' ? 'L’escale lecture' : 'L’escale des nombres'}</span><span>${RUN.index + 1} / ${RUN.steps.length}</span></div>
+    <div class="exercise-meta"><span>${nauticalIcon(T.subject === 'lecture' ? 'book' : 'compass')} ${T.subject === 'lecture' ? 'L’escale des lettres' : 'L’escale des nombres'}</span><span>${RUN.index + 1} / ${RUN.steps.length}</span></div>
     <div class="guide">
       <span class="guide-face prof-face">${profSVG()}</span>
       <div class="bubble">
         <span class="bubble-text"></span>
         <button class="round-btn say" title="Écouter la consigne" aria-label="Écouter la consigne">${nauticalIcon('sound')}</button>
-        <button class="round-btn hint hidden" title="Un indice" aria-label="Afficher un indice">${nauticalIcon('star')}</button>
+        <button class="round-btn hint" title="Montre-moi" aria-label="Montre-moi une aide">${nauticalIcon('star')}</button>
         <button class="why-btn hidden">🤔 Pourquoi ?</button>
       </div>
     </div>
@@ -1947,10 +1928,13 @@ function enterStep() {
       step.mistakes++;
       RUN.streak = 0;
       renderStreak();
-      SFX.bad();
+      SFX.pop();
       boatMood('oops');
       profMood(el, 'oops');
-      say(step.mistakes >= 2 && !msg ? profLine('cheer') : msg || pick(OOPS));
+      const help = T.hint(q);
+      say(msg || help.show);
+      speak(msg || help.say || help.show);
+      if (help.html) { hintBox.innerHTML = help.html; hintBox.classList.remove('hidden'); }
       hintBtn.classList.remove('hidden');
       if (T.explain && wrong !== undefined) {
         step.lastWrong = wrong;
@@ -1963,7 +1947,7 @@ function enterStep() {
       if (step.solved) return;
       step.solved = true;
       api.clearWhy();
-      const stars = step.mistakes === 0 ? 3 : step.mistakes === 1 ? 2 : 1;
+      const stars = 3; // On récompense la découverte, quel que soit le nombre d’essais.
       RUN.stars += stars;
       if (step.mistakes === 0) RUN.streak++;
       if (T.track) T.track(q, step.mistakes === 0);
@@ -1982,7 +1966,7 @@ function enterStep() {
 function showBravo(stars) {
   const isLast = RUN.index === RUN.steps.length - 1;
   const msg = pick(BRAVO).replace(' {name}', S.name ? ` ${S.name}` : '');
-  const sub = stars === 3 ? 'Parfait, du premier coup !' : stars === 2 ? 'Bien joué !' : 'Tu as réussi, bravo !';
+  const sub = 'Tu as appris en jouant. Bravo !';
   const ov = h(`<div class="overlay" role="dialog" aria-modal="true" aria-label="Escale réussie"><div class="bravo-card"><span class="eyebrow">UNE NOUVELLE DÉCOUVERTE !</span>
     <div class="bravo-av">${boatSVG(S.boat, 'happy')}</div>
     <h2 class="bravo-title">${esc(msg)}</h2>
@@ -2095,5 +2079,6 @@ function renderTreasure() {
 }
 
 // ================= Démarrage =================
+registerPreschoolRooms();
 installArtwork();
 renderHome();

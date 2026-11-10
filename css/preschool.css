@@ -1,0 +1,43 @@
+/* Grandes cibles tactiles et modèles permanents pour les non-lecteurs. */
+.little-model { text-align: center; margin: 12px auto 20px; color: #193858; }
+.little-model > span { display: block; font-size: 16px; }
+.little-letter { font-family: Andika, sans-serif; font-size: clamp(52px, 9vw, 82px); line-height: 1.4; font-weight: bold; }
+.little-letter > span { font-size: 32px; color: #497f8c; }
+.little-model .btn { margin-top: 8px; min-height: 48px; }
+.little-choices { display: flex; flex-wrap: wrap; justify-content: center; gap: 18px; margin: 20px auto; }
+.little-choice { min-width: 100px; min-height: 100px; padding: 12px 22px; border: 3px solid #508b9b; border-radius: 24px; background: #fffaf0; color: #193858; font: bold 64px Andika, sans-serif; cursor: pointer; box-shadow: 0 5px 0 #c5dce0; }
+.little-choice:hover { background: #e5f9fb; }
+.little-choice:disabled { opacity: 1; cursor: default; }
+.little-choice.little-correct { background: #d8f6de; border-color: #278052; }
+.little-choice.little-help { border-color: #c28a00; background: #fff0ba; box-shadow: 0 0 0 5px #ffdf80; }
+.little-shells, .little-slots { display: grid; grid-template-columns: repeat(5, minmax(0, 76px)); justify-content: center; gap: 12px; margin: 20px auto; }
+.little-shell, .little-slot { position: relative; min-width: 0; height: 78px; border: 2px dashed #71939d; border-radius: 20px; background: #fff9e9; font-size: 38px; color: #193858; cursor: pointer; }
+.little-shell.counted, .little-slot.filled { border-style: solid; background: #ddf6f4; border-color: #287d88; }
+.little-shell b { position: absolute; right: -5px; top: -10px; background: #193858; color: white; border-radius: 50%; min-width: 28px; font: bold 20px Andika, sans-serif; }
+.little-shell b:empty { display: none; }
+.little-shell .picture, .little-slot .picture { width: 40px; height: 40px; }
+.little-status { text-align: center; font-size: 19px; color: #193858; }
+.little-target { display: block; font: bold 64px Andika, sans-serif; }
+.little-count-model { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; max-width: 440px; margin: 12px auto; }
+.little-count-model > span { display: inline-flex; flex-direction: column; align-items: center; min-width: 32px; font-size: 30px; }
+.little-count-model b { font: bold 19px Andika, sans-serif; }
+.little-count-model .picture { width: 32px; height: 32px; }
+.little-check { display: flex; margin: 16px auto; min-height: 56px; }
+button:focus-visible { outline: 4px solid #195fc0; outline-offset: 5px; }
+@media (max-width: 480px) {
+  .little-shells, .little-slots { gap: 7px; }
+  .little-shell, .little-slot { height: 60px; font-size: 28px; }
+  .little-choice { min-width: 76px; min-height: 88px; padding: 8px 15px; font-size: 54px; }
+  .little-choices { gap: 12px; }
+  .home-brand { font-size: 14px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
+/* L’aide est toujours présente : elle ne doit pas clignoter ni bouger. */
+.marine-voyage .bubble .round-btn { width: 48px; height: 48px; min-width: 48px; }
+.marine-voyage .bubble .round-btn.hint { animation: none; }
+.marine-voyage .room-body { background: #fffaf0f5; border: 2px solid #bad8d3; border-radius: 24px; padding: 18px 14px; }
+.marine-voyage .exercise-meta { width: 100%; }
+/* Le bateau reste dans le décor, derrière les consignes et les manipulations. */
+.marine-voyage .stage { z-index: 4; }
