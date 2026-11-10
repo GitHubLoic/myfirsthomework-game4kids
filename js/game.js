@@ -577,6 +577,7 @@ async function sailToIsland(isle, frac = 1) {
 async function sailHome() {
   const p = boatHome();
   await sailTo(p.x, p.b, 1);
+  if (boatEl()) boatEl().classList.remove('answer-voyage');
 }
 
 function boatMood(mood) {
@@ -1870,7 +1871,7 @@ function enterStep() {
       <span class="guide-face prof-face">${profSVG()}</span>
       <div class="bubble">
         <span class="bubble-text"></span>
-        <button class="round-btn say" title="Écouter la consigne" aria-label="Écouter la consigne">${nauticalIcon('sound')}</button>
+        <button class="round-btn say" title="Réécouter" aria-label="Réécouter">${nauticalIcon('sound')}</button>
         <button class="round-btn hint" title="Montre-moi" aria-label="Montre-moi une aide">${nauticalIcon('star')}</button>
         <button class="why-btn hidden">🤔 Pourquoi ?</button>
       </div>
@@ -1880,6 +1881,7 @@ function enterStep() {
     <div class="room-body"></div>
   </div>`);
   const stage = document.getElementById('stage');
+  if (boatEl()) boatEl().classList.remove('answer-voyage');
   stage.replaceChildren(el);
   stage.classList.remove('away');
   scrollTo(0, 0);
@@ -1894,9 +1896,10 @@ function enterStep() {
   const instr = T.instruction(q);
   say(instr);
   RUN.greeted = true;
-  setTimeout(() => { if (el.isConnected) speak(T.listen ? T.listen(q) : instr); }, 300);
+  const introTimer = setTimeout(() => { if (el.isConnected) speak(T.listen ? T.listen(q) : instr); }, 300);
+  el.addEventListener('click', () => clearTimeout(introTimer), { once: true });
 
-  el.querySelector('.say').addEventListener('click', () => speak(T.listen && bubbleText.textContent === instr ? T.listen(q) : bubbleText.textContent, { force: true }));
+  el.querySelector('.say').addEventListener('click', () => speak(T.replay ? T.replay(q) : bubbleText.textContent, { force: true }));
   hintBtn.addEventListener('click', () => {
     const hi = T.hint(q);
     profMood(el, 'think', 4000);
@@ -2039,6 +2042,7 @@ function renderTreasure() {
   </div>`);
   el.querySelector('.tap-msg').insertAdjacentHTML('afterend', profSays('Le trésor est là ! Vas-y, ouvre-le !', 'think', 'treasure-prof'));
   const stage = document.getElementById('stage');
+  if (boatEl()) boatEl().classList.remove('answer-voyage');
   stage.replaceChildren(el);
   stage.classList.remove('away');
   scrollTo(0, 0);

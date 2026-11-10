@@ -9,7 +9,7 @@ On garde le bateau personnalisable, les cinq mers illustrées, les quatre profes
 - **Moyenne section** : reconnaître les 26 lettres capitales, retrouver une lettre parmi deux choix à partir d’une consigne sonore et d’une image repère, dénombrer et construire des collections de 1 à 5.
 - **Grande section** : reconnaître les capitales, retrouver une capitale ou une minuscule à partir d’une consigne sonore et d’une image repère, choisir parmi trois réponses, dénombrer et construire des collections de 1 à 10.
 - **Je compte** : toucher chaque coquillage une seule fois pour l’énumérer, entendre le nombre, puis retrouver le cardinal ; remplir et vider les cases du bateau pour construire une collection.
-- **Les lettres** : entendre le nom de la lettre, voir une image dont le nom commence par cette lettre (T comme tortue), puis choisir la lettre sur une île. La réponse écrite apparaît uniquement dans l’aide. Les deux activités proposent des capitales ou des minuscules ; la voix utilise le nom des lettres, sans prétendre produire leurs phonèmes isolés. Le bouton Écouter permet de rejouer la consigne même lorsque la narration automatique est désactivée.
+- **Les lettres** : entendre le nom de la lettre, voir une image dont le nom commence par cette lettre (T comme tortue), puis choisir la lettre sur une île. La réponse écrite apparaît uniquement dans l’aide. Le bateau rejoint l’île choisie avant de valider ; après une erreur, il revient au départ. Les chiffres et les lettres sont centrés dans les panneaux. Les deux activités proposent des capitales ou des minuscules ; la voix utilise le nom des lettres, sans prétendre produire leurs phonèmes isolés. La consigne complète est dite au début. Le bouton de la bulle rejoue uniquement le nom de la lettre ; celui de l’image dit uniquement le mot repère, même lorsque la narration automatique est désactivée.
 - **Tout explorer** : alterner les lettres et les nombres.
 
 Les images repères sont disponibles pour les 26 lettres. Les aides sont disponibles dès la première consigne. Après une erreur, le professeur explique et le jeu montre un modèle ou met la bonne réponse en évidence. Chaque escale terminée donne trois étoiles, quels que soient les essais et les aides utilisés. Aucun chronomètre.
@@ -39,6 +39,7 @@ Avec Node.js, Playwright et Chromium installés :
 # Dans un autre terminal, laisser tourner python3 serve.py
 node tests/preschool.cjs
 node tests/audio-letters.cjs
+node tests/voyage-choices.cjs
 ```
 
 Le test vérifie les générateurs MS / GS, la séparation lettres / nombres, les erreurs et les aides, le comptage sans doublons, les collections, les récompenses, la sauvegarde et la largeur mobile. Par défaut, Chromium est attendu dans `/usr/bin/chromium` ; définir `CHROMIUM_PATH` pour utiliser une autre installation.

@@ -19,6 +19,50 @@ const LETTER_CLUES = {
 };
 const letterPrompt = (q) => `Écoute : la lettre ${letterName(q.answer)}, comme au début de ${LETTER_CLUES[q.answer][0]}. Retrouve ${q.lowercase ? 'la lettre minuscule' : 'la lettre'} sur une île.`;
 
+// Le choix est une destination : on attend l’arrivée avant de valider la réponse.
+function wirePreschoolVoyage(choices, answer, api, onSuccess, onWrong) {
+  const run = RUN;
+  let busy = false;
+  let solved = false;
+  const buttons = [...choices.querySelectorAll('button')];
+  buttons.forEach((button) => button.addEventListener('click', async () => {
+    if (busy || solved || !stillHere(run)) return;
+    busy = true;
+    buttons.forEach((b) => { b.disabled = true; });
+    choices.setAttribute('aria-busy', 'true');
+    const correct = button.textContent === String(answer);
+    const boat = boatEl();
+    boat.classList.add('answer-voyage');
+    button.classList.add('sailing-to');
+    const status = document.getElementById('sailing-status');
+    if (status) status.textContent = 'Le bateau rejoint l’île choisie.';
+    try {
+      await sailToIsland(button, correct ? 1 : 0.65);
+      if (!stillHere(run)) return;
+      if (correct) {
+        solved = true;
+        button.classList.add('little-correct');
+        onSuccess();
+        api.success();
+      } else {
+        onWrong();
+        await sleep(350);
+        if (!stillHere(run)) return;
+        await sailHome();
+      }
+    } finally {
+      busy = false;
+      choices.removeAttribute('aria-busy');
+      button.classList.remove('sailing-to');
+      if (stillHere(run)) {
+        buttons.forEach((b) => { b.disabled = solved; });
+        if (!solved) boat.classList.remove('answer-voyage');
+        if (status) status.textContent = correct ? 'Le bateau est arrivé !' : 'Le bateau est revenu. Essaie une autre île.';
+      }
+    }
+  }));
+}
+
 function registerPreschoolRooms() {
   const letters = (lowercase) => ({
     subject: 'lecture',
@@ -29,6 +73,7 @@ function registerPreschoolRooms() {
     },
     instruction: () => 'Écoute et retrouve la lettre sur une île.',
     listen: letterPrompt,
+    replay: (q) => letterName(q.answer),
     hint: (q) => ({
       show: `Voici une aide : ${q.answer}${q.lowercase ? ` et ${q.answer.toLowerCase()}` : ''}. Retrouve cette lettre sur une île.`,
       say: `C'est la lettre ${letterName(q.answer)}. Regarde le modèle, puis retrouve la même forme.`,
@@ -36,28 +81,19 @@ function registerPreschoolRooms() {
     }),
     render(body, q, api) {
       const [word, picture] = LETTER_CLUES[q.answer];
-      body.append(h(`<div class="little-model sound-clue"><span>Écoute bien…</span><button class="hear-letter clue-listen" type="button" aria-label="Écouter la lettre et le mot repère"><img class="letter-clue-picture" src="assets/pictures/${picture}.svg" alt="${word}" width="100" height="100"><span class="clue-listen-label">${nauticalIcon('sound')} Écouter</span></button><small>Comme au début de…</small></div>`));
-      body.querySelector('.hear-letter').onclick = () => speak(letterPrompt(q), { force: true });
+      body.append(h(`<div class="little-model sound-clue"><span>Écoute bien…</span><button class="hear-letter clue-listen" type="button" aria-label="Écouter le mot repère"><img class="letter-clue-picture" src="assets/pictures/${picture}.svg" alt="${word}" width="100" height="100"><span class="clue-listen-label">${nauticalIcon('sound')} Écouter le mot</span></button><small>Comme au début de…</small></div>`));
+      body.querySelector('.hear-letter').onclick = () => speak(word, { force: true });
       const choices = h('<div class="little-choices" role="group" aria-label="Choisis la lettre entendue"></div>');
-      let solved = false;
       q.options.forEach((letter) => {
         const display = q.lowercase ? letter.toLowerCase() : letter;
-        const button = h(`<button class="little-choice little-letter" type="button" aria-label="Lettre ${letter}"><span class="letter-face">${display}</span></button>`);
-        button.onclick = () => {
-          if (solved) return;
-          if (letter === q.answer) {
-            solved = true;
-            choices.querySelectorAll('button').forEach((b) => { b.disabled = true; });
-            button.classList.add('little-correct');
-            speak(`Oui ! La lettre ${letterName(letter)} !`);
-            api.success();
-          } else {
-            api.fail(`Écoutons encore : ${letterName(q.answer)}, comme au début de ${word}. Regarde la lettre dans l’aide.`);
-            choices.querySelectorAll('button').forEach((b) => b.classList.toggle('little-help', b.textContent === (q.lowercase ? q.answer.toLowerCase() : q.answer)));
-          }
-        };
-        choices.append(button);
+        choices.append(h(`<button class="little-choice little-letter" type="button" aria-label="Lettre ${letter}"><span class="letter-face">${display}</span></button>`));
       });
+      wirePreschoolVoyage(choices, q.lowercase ? q.answer.toLowerCase() : q.answer, api,
+        () => speak(`Oui ! La lettre ${letterName(q.answer)} !`),
+        () => {
+          api.fail(`Écoutons encore : ${letterName(q.answer)}, comme au début de ${word}. Regarde la lettre dans l’aide.`);
+          choices.querySelectorAll('button').forEach((b) => b.classList.toggle('little-help', b.textContent === (q.lowercase ? q.answer.toLowerCase() : q.answer)));
+        });
       body.append(choices);
     },
   });
@@ -73,16 +109,16 @@ function registerPreschoolRooms() {
   ROOM_TYPES.petitCompte = {
     subject: 'maths', make: numberQuestion,
     instruction: () => 'Combien de coquillages ? Touche les coquillages pour compter.',
+    replay: () => 'Combien de coquillages ?',
     hint: countHint,
     render(body, q, api) {
       const shellBox = h('<div class="little-shells" role="group" aria-label="Coquillages à compter"></div>');
       const counted = new Set();
-      let solved = false;
       const status = h('<p class="little-status" role="status" aria-live="polite">Touche un coquillage pour commencer.</p>');
       for (let i = 0; i < q.n; i++) {
         const button = h(`<button type="button" class="little-shell" aria-label="Coquillage ${i + 1}, à compter" aria-pressed="false">🐚<b></b></button>`);
         button.onclick = () => {
-          if (solved || counted.has(i)) return;
+          if (RUN.steps[RUN.index].solved || counted.has(i)) return;
           counted.add(i);
           button.classList.add('counted');
           button.setAttribute('aria-pressed', 'true');
@@ -97,28 +133,19 @@ function registerPreschoolRooms() {
       body.append(shellBox, status);
       const options = shuffle([q.n, ...shuffle(Array.from({ length: q.max }, (_, i) => i + 1).filter((n) => n !== q.n)).slice(0, S.level === 'GS' ? 2 : 1)]);
       const choices = h('<div class="little-choices" role="group" aria-label="Combien en tout ?"></div>');
-      options.forEach((n) => {
-        const button = h(`<button class="little-choice" type="button" aria-label="${n} coquillages">${n}</button>`);
-        button.onclick = () => {
-          if (solved) return;
-          if (n === q.n) {
-            solved = true;
-            choices.querySelectorAll('button').forEach((b) => { b.disabled = true; });
-            button.classList.add('little-correct');
-            speak(`Oui, ${smallNumber(q.n)} coquillages en tout !`);
-            api.success();
-          } else {
-            api.fail();
-            choices.querySelectorAll('button').forEach((b) => b.classList.toggle('little-help', Number(b.textContent) === q.n));
-          }
-        };
-        choices.append(button);
-      });
+      options.forEach((n) => choices.append(h(`<button class="little-choice" type="button" aria-label="${n} coquillages"><span class="letter-face">${n}</span></button>`)));
+      wirePreschoolVoyage(choices, q.n, api,
+        () => speak(`Oui, ${smallNumber(q.n)} coquillages en tout !`),
+        () => {
+          api.fail();
+          choices.querySelectorAll('button').forEach((b) => b.classList.toggle('little-help', Number(b.textContent) === q.n));
+        });
       body.append(choices);
     },
   };
   ROOM_TYPES.petiteCollection = {
     subject: 'maths', make: numberQuestion,
+    replay: (q) => smallNumber(q.n),
     instruction: (q) => `Prépare ${smallNumber(q.n)} coquillages dans le bateau. Touche les places pour les remplir.`,
     hint: (q) => ({
       show: `Il faut ${q.n} coquillages. Remplis une case pour chaque coquillage du modèle.`,

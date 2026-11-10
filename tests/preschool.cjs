@@ -47,6 +47,7 @@ const assert = require('node:assert/strict');
         const wrong = page.locator('.little-choice').filter({hasText: /./});
         const labels = await wrong.allTextContents();
         await wrong.nth(labels.findIndex(l => l !== model)).click();
+        await page.locator('.little-help').waitFor({state:'visible'});
         assert.ok(await page.locator('.little-help').isVisible());
         await page.locator('.little-help').click();
       } else if (type === 'petitCompte') {
@@ -66,6 +67,7 @@ const assert = require('node:assert/strict');
         for (let i = 0; i < n; i++) await page.locator('.little-slot').nth(i).click();
         await page.locator('.little-check').click();
       }
+      await page.waitForFunction(() => RUN.steps[0].solved);
       assert.equal(await page.evaluate(() => RUN.steps[0].solved), true);
       await page.waitForSelector('.overlay .next');
       assert.equal(await page.locator('.overlay').count(), 1);
