@@ -189,6 +189,8 @@ button:focus-visible { outline: 4px solid #195fc0; outline-offset: 5px; }
 .marine-voyage .boat.answer-voyage { z-index: 6; }
 .little-choice.sailing-to::before { border-color: #ffca53; }
 .little-model .hear-sound { display: flex; align-items: center; justify-content: center; gap: 6px; margin: 10px auto; min-height: 48px; font-size: 16px; }
-.phoneme-feedback:not(:empty) { display: block; max-width: 240px; margin-top: 10px; font-size: 14px; color: #855022; }
+.word-audio-feedback:not(:empty) { display: block; max-width: 240px; margin-top: 10px; font-size: 14px; color: #855022; }
 /* Garder de la place pour le personnage sous la destination, même avec le bouton de son. */
 .little-choice { scroll-margin-block-end: 120px; scroll-margin-block-start: 85px; }
+/* Les longues consignes audio restent stables et lisibles sur petit écran. */
+.marine-voyage .room[data-subject="lecture"] .bubble.bump { animation: none; }

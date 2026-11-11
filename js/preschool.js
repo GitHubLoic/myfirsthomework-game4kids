@@ -75,16 +75,16 @@ function registerPreschoolRooms() {
     make(level) {
       const answer = pick(PRESCHOOL_ALPHABET);
       const options = [answer];
-      const sounds = new Set([LETTER_PHONEMES[answer]]);
+      const sounds = new Set([LETTER_INITIAL_SOUNDS[answer]]);
       for (const letter of shuffle(PRESCHOOL_ALPHABET.filter(l => l !== answer))) {
-        if (sounds.has(LETTER_PHONEMES[letter])) continue;
-        options.push(letter); sounds.add(LETTER_PHONEMES[letter]);
+        if (sounds.has(LETTER_INITIAL_SOUNDS[letter])) continue;
+        options.push(letter); sounds.add(LETTER_INITIAL_SOUNDS[letter]);
         if (options.length === (level === 'GS' ? 3 : 2)) break;
       }
       return { answer, options: shuffle(options), lowercase };
     },
-    instruction: () => `Écoute et retrouve la lettre ${themeText('sur une île', 'pour nourrir le dino')}.`,
-    play: (q, options) => Phonemes.play(q.answer, options),
+    instruction: () => `Écoute le début du mot et retrouve sa première lettre ${themeText('sur une île', 'pour nourrir le dino')}.`,
+    play: (q, options) => WordAudio.play(q.answer, options),
     hint: (q) => ({
       show: `Voici une aide : ${q.answer}${q.lowercase ? ` et ${q.answer.toLowerCase()}` : ''}. Retrouve cette lettre ${themeText('sur une île', 'pour nourrir le dino')}.`,
       say: q.answer === 'H' ? 'Cette lettre ne se prononce pas. Regarde sa forme dans l’aide.' : `Écoute le début du mot ${LETTER_CLUES[q.answer][0]}. Regarde la forme dans l’aide.`,
@@ -92,13 +92,16 @@ function registerPreschoolRooms() {
     }),
     render(body, q, api) {
       const [word, picture] = LETTER_CLUES[q.answer];
-      body.append(h(`<div class="little-model sound-clue"><span>Écoute le son…</span><button class="hear-letter clue-listen" type="button" aria-label="Écouter le mot repère"><img class="letter-clue-picture" src="assets/pictures/${picture}.svg" alt="${word}" width="100" height="100"><span class="clue-listen-label">${nauticalIcon('sound')} Écouter le mot</span></button><button class="btn hear-sound" type="button">${nauticalIcon('sound')} Écouter le son</button><small>${q.answer === 'H' ? 'La première lettre ne s’entend pas.' : 'Comme au début du mot.'}</small><span class="phoneme-feedback" role="status" aria-live="polite"></span></div>`));
+      body.append(h(`<div class="little-model sound-clue"><span>Écoute le début du mot…</span><button class="hear-letter clue-listen" type="button" aria-label="Écouter le mot repère"><img class="letter-clue-picture" src="assets/pictures/${picture}.svg" alt="${word}" width="100" height="100"><span class="clue-listen-label">${nauticalIcon('sound')} Écouter le mot</span></button><button class="btn hear-sound" type="button">${nauticalIcon('sound')} Écouter le début</button><small>${q.answer === 'H' ? 'La première lettre ne s’entend pas.' : 'Puis retrouve sa première lettre.'}</small><span class="word-audio-feedback" role="status" aria-live="polite"></span></div>`));
       body.querySelector('.hear-sound').onclick = () => {
-        body.querySelector('.phoneme-feedback').textContent = '';
+        body.querySelector('.word-audio-feedback').textContent = '';
         api.say(this.instruction(q));
-        return Phonemes.play(q.answer, { force: true, onError: message => { body.querySelector('.phoneme-feedback').textContent = message; } });
+        return WordAudio.play(q.answer, { force: true, onError: message => { body.querySelector('.word-audio-feedback').textContent = message; } });
       };
-      body.querySelector('.hear-letter').onclick = () => speak(word, { force: true });
+      body.querySelector('.hear-letter').onclick = () => {
+        body.querySelector('.word-audio-feedback').textContent = '';
+        return WordAudio.play(q.answer, { force: true, whole: true, onError: message => { body.querySelector('.word-audio-feedback').textContent = message; } });
+      };
       const choices = h('<div class="little-choices" role="group" aria-label="Choisis la lettre entendue"></div>');
       q.options.forEach((letter) => {
         const display = q.lowercase ? letter.toLowerCase() : letter;
