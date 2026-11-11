@@ -2,8 +2,6 @@
 
 // La lettre est entendue et associée à une image ; sa forme est révélée uniquement par l’aide.
 const PRESCHOOL_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
-const LETTER_NAMES = ['a', 'bé', 'cé', 'dé', 'e', 'effe', 'gé', 'ache', 'i', 'ji', 'ka', 'elle', 'emme', 'enne', 'o', 'pé', 'ku', 'erre', 'esse', 'té', 'u', 'vé', 'double vé', 'iks', 'i grec', 'zède'];
-const letterName = (letter) => LETTER_NAMES[PRESCHOOL_ALPHABET.indexOf(letter)];
 const smallNumber = (n) => ['zéro', 'un', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf', 'dix'][n];
 
 const LETTER_CLUES = {
@@ -11,13 +9,13 @@ const LETTER_CLUES = {
   D: ['dauphin', '1f42c'], E: ['escargot', '1f40c'], F: ['fleur', '1f338'],
   G: ['grenouille', '1f438'], H: ['hibou', '1f989'], I: ['île', '1f3dd'],
   J: ['jus', '1f9c3'], K: ['koala', '1f428'], L: ['lion', '1f981'],
-  M: ['mouton', '1f411'], N: ['nuage', '1f327'], O: ['ours', '1f43b'],
+  M: ['mouton', '1f411'], N: ['nuage', '1f327'], O: ['orange', '1f34a'],
   P: ['pomme', '1f34e'], Q: ['quille', '1f3b3'], R: ['renard', '1f98a'],
   S: ['soleil', '2600'], T: ['tortue', '1f422'], U: ['usine', '1f3ed'],
   V: ['vache', '1f42e'], W: ['wagon', '1f683'], X: ['xylophone', 'xylophone'],
   Y: ['yoyo', '1fa80'], Z: ['zèbre', '1f993'],
 };
-const letterPrompt = (q) => `Écoute : la lettre ${letterName(q.answer)}, comme au début de ${LETTER_CLUES[q.answer][0]}. Retrouve ${q.lowercase ? 'la lettre minuscule' : 'la lettre'} ${themeText('sur une île', 'pour nourrir le dino')}.`;
+
 
 // Le choix est une destination : on attend l’arrivée avant de valider la réponse.
 function wirePreschoolVoyage(choices, answer, api, onSuccess, onWrong) {
@@ -76,20 +74,30 @@ function registerPreschoolRooms() {
     subject: 'lecture',
     make(level) {
       const answer = pick(PRESCHOOL_ALPHABET);
-      const options = shuffle([answer, ...shuffle(PRESCHOOL_ALPHABET.filter((l) => l !== answer)).slice(0, level === 'GS' ? 2 : 1)]);
-      return { answer, options, lowercase };
+      const options = [answer];
+      const sounds = new Set([LETTER_PHONEMES[answer]]);
+      for (const letter of shuffle(PRESCHOOL_ALPHABET.filter(l => l !== answer))) {
+        if (sounds.has(LETTER_PHONEMES[letter])) continue;
+        options.push(letter); sounds.add(LETTER_PHONEMES[letter]);
+        if (options.length === (level === 'GS' ? 3 : 2)) break;
+      }
+      return { answer, options: shuffle(options), lowercase };
     },
     instruction: () => `Écoute et retrouve la lettre ${themeText('sur une île', 'pour nourrir le dino')}.`,
-    listen: letterPrompt,
-    replay: (q) => letterName(q.answer),
+    play: (q, options) => Phonemes.play(q.answer, options),
     hint: (q) => ({
       show: `Voici une aide : ${q.answer}${q.lowercase ? ` et ${q.answer.toLowerCase()}` : ''}. Retrouve cette lettre ${themeText('sur une île', 'pour nourrir le dino')}.`,
-      say: `C'est la lettre ${letterName(q.answer)}. Regarde le modèle, puis retrouve la même forme.`,
+      say: q.answer === 'H' ? 'Cette lettre ne se prononce pas. Regarde sa forme dans l’aide.' : `Écoute le début du mot ${LETTER_CLUES[q.answer][0]}. Regarde la forme dans l’aide.`,
       html: `<div class="little-letter">${q.lowercase ? `${q.answer} → ${q.answer.toLowerCase()}` : q.answer}</div>`,
     }),
     render(body, q, api) {
       const [word, picture] = LETTER_CLUES[q.answer];
-      body.append(h(`<div class="little-model sound-clue"><span>Écoute bien…</span><button class="hear-letter clue-listen" type="button" aria-label="Écouter le mot repère"><img class="letter-clue-picture" src="assets/pictures/${picture}.svg" alt="${word}" width="100" height="100"><span class="clue-listen-label">${nauticalIcon('sound')} Écouter le mot</span></button><small>Comme au début de…</small></div>`));
+      body.append(h(`<div class="little-model sound-clue"><span>Écoute le son…</span><button class="hear-letter clue-listen" type="button" aria-label="Écouter le mot repère"><img class="letter-clue-picture" src="assets/pictures/${picture}.svg" alt="${word}" width="100" height="100"><span class="clue-listen-label">${nauticalIcon('sound')} Écouter le mot</span></button><button class="btn hear-sound" type="button">${nauticalIcon('sound')} Écouter le son</button><small>${q.answer === 'H' ? 'La première lettre ne s’entend pas.' : 'Comme au début du mot.'}</small><span class="phoneme-feedback" role="status" aria-live="polite"></span></div>`));
+      body.querySelector('.hear-sound').onclick = () => {
+        body.querySelector('.phoneme-feedback').textContent = '';
+        api.say(this.instruction(q));
+        return Phonemes.play(q.answer, { force: true, onError: message => { body.querySelector('.phoneme-feedback').textContent = message; } });
+      };
       body.querySelector('.hear-letter').onclick = () => speak(word, { force: true });
       const choices = h('<div class="little-choices" role="group" aria-label="Choisis la lettre entendue"></div>');
       q.options.forEach((letter) => {
@@ -97,9 +105,9 @@ function registerPreschoolRooms() {
         choices.append(h(`<button class="little-choice little-letter" type="button" aria-label="Lettre ${letter}"><span class="letter-face">${display}</span>${answerFoodHTML()}</button>`));
       });
       wirePreschoolVoyage(choices, q.lowercase ? q.answer.toLowerCase() : q.answer, api,
-        () => speak(`Oui ! La lettre ${letterName(q.answer)} !`),
+        () => speak(q.answer === 'H' ? 'Bravo, tu as trouvé la lettre qui ne se prononce pas !' : `Bravo ! Tu as trouvé le son au début de ${word} !`),
         () => {
-          api.fail(`Écoutons encore : ${letterName(q.answer)}, comme au début de ${word}. Regarde la lettre dans l’aide.`);
+          api.fail(q.answer === 'H' ? 'Cette lettre ne se prononce pas. Regarde sa forme dans l’aide.' : `Écoute le début de ${word}. Regarde la lettre dans l’aide.`);
           choices.querySelectorAll('button').forEach((b) => b.classList.toggle('little-help', b.textContent === (q.lowercase ? q.answer.toLowerCase() : q.answer)));
         });
       body.append(choices);

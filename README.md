@@ -18,7 +18,7 @@ Les activités MS / GS, les professeurs, les étoiles et les mondes débloqués 
 - **Moyenne section** : reconnaître les 26 lettres capitales, retrouver une lettre parmi deux choix à partir d’une consigne sonore et d’une image repère, dénombrer et construire des collections de 1 à 5.
 - **Grande section** : reconnaître les capitales, retrouver une capitale ou une minuscule à partir d’une consigne sonore et d’une image repère, choisir parmi trois réponses, dénombrer et construire des collections de 1 à 10.
 - **Je compte** : toucher chaque coquillage une seule fois pour l’énumérer, entendre le nombre, puis retrouver le cardinal ; remplir et vider les cases du bateau pour construire une collection.
-- **Les lettres** : entendre le nom de la lettre, voir une image dont le nom commence par cette lettre (T comme tortue), puis choisir la lettre sur une île. La réponse écrite apparaît uniquement dans l’aide. Le bateau rejoint l’île choisie avant de valider ; après une erreur, il revient au départ. Les chiffres et les lettres sont centrés dans les panneaux. Les deux activités proposent des capitales ou des minuscules ; la voix utilise le nom des lettres, sans prétendre produire leurs phonèmes isolés. La consigne complète est dite au début. Le bouton de la bulle rejoue uniquement le nom de la lettre ; celui de l’image dit uniquement le mot repère, même lorsque la narration automatique est désactivée.
+- **Les lettres** : entendre le son oral du début du mot repère (le souffle de /s/, le bourdonnement de /m/, le petit relâchement de /t/), puis choisir la lettre. Les sons sont des fichiers audio locaux, sans lecture du nom de la lettre par le navigateur. Le bouton « Écouter le son » et celui de la bulle rejouent uniquement le phonème ; « Écouter le mot » dit le mot entier. Les C / K / Q ou V / W ne sont pas proposés ensemble lorsqu’ils représentent le même son. O utilise orange ; le H silencieux est expliqué à part. Les images repères et les aides restent disponibles.
 - **Tout explorer** : alterner les lettres et les nombres.
 
 Les images repères sont disponibles pour les 26 lettres. Les aides sont disponibles dès la première consigne. Après une erreur, le professeur explique et le jeu montre un modèle ou met la bonne réponse en évidence. Chaque escale terminée donne trois étoiles, quels que soient les essais et les aides utilisés. Aucun chronomètre.
@@ -31,12 +31,13 @@ python3 serve.py
 
 Ouvrir <http://localhost:8765>. Aucun gestionnaire de paquets ni compilation nécessaire. L’enfant peut choisir directement L’île des lettres ou Le trésor à compter. Le coin des parents regroupe le choix MS / GS, le thème, le professeur et la personnalisation du bateau ou du dino. Le prénom est facultatif. Les activités de lettres demandent d’écouter : utiliser le bouton Écouter. Si la synthèse vocale est indisponible, un adulte peut nommer l’image et la lettre, ou ouvrir l’aide.
 
-La synthèse vocale dépend des voix du navigateur et du système : une voix française est recommandée. Le test du son et le choix de voix se trouvent dans l’atelier. Les données sont enregistrées sur cet appareil dans `petitesIlesMagiques.v1`, séparément de la version CP / CE1. Les images et polices sont locales.
+Les sons des lettres sont intégrés au jeu et fonctionnent sans voix système. La synthèse vocale des mots et des consignes dépend des voix du navigateur : une voix française est recommandée. Le test du son et le choix de voix se trouvent dans l’atelier. Les données sont enregistrées sur cet appareil dans `petitesIlesMagiques.v1`, séparément de la version CP / CE1. Les images et polices sont locales.
 
 ## Organisation
 
 - `js/themes.js`, `css/themes.css`, `assets/dinosaurs` : thèmes, textes, décors et personnage préhistorique.
-- `js/preschool.js` : quatre activités maternelle, noms des 26 lettres, modèles et manipulation.
+- `js/phonemes.js`, `assets/phonemes` : sons oraux fixes, lecture Web Audio et crédits des enregistrements.
+- `js/preschool.js` : quatre activités maternelle, sons des lettres, modèles et manipulation.
 - `js/game.js` : accueil MS / GS, navigation, voyages, aides et récompenses ; les anciens moteurs CP / CE1 sont conservés pour l’historique mais exclus des voyages maternelle.
 - `css/preschool.css` : grandes cibles tactiles, modèles et collections.
 - `js/prof.js`, `js/boat.js`, `js/scenes.js`, `js/archipelago.js` : univers et personnages du jeu d’origine.

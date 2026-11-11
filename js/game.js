@@ -127,6 +127,7 @@ function canSpeak() {
 
 function speak(text, { queue = false, rate = 0.9, force = false } = {}) {
   if (!force && !canSpeak()) return null;
+  if (!queue) Phonemes.stop();
   if (!('speechSynthesis' in window)) return null;
   try {
     // Safari (iPhone) perd parfois la phrase si on annule pour rien juste avant
@@ -231,6 +232,7 @@ const Confetti = (() => {
 
 // ================= Thème du monde =================
 function setTheme(w) {
+  Phonemes.stop();
   applyGameTheme();
   document.body.style.setProperty('--answer-art', `url("${new URL(worldArtPath(w ? w.id : 'tropical'), document.baseURI).href}")`);
   const st = document.body.style;
@@ -562,7 +564,7 @@ async function sailToIsland(isle, frac = 1) {
   let r = shore.getBoundingClientRect();
   const topbar = document.querySelector('.topbar');
   const safeTop = (topbar ? topbar.getBoundingClientRect().bottom : 0) + 20;
-  const safeBottom = Math.max(32, el.offsetHeight * 0.25);
+  const safeBottom = Math.max(32, el.offsetHeight * (isDinoTheme() ? 0.75 : 0.25));
   if (r.top < safeTop || r.bottom > innerHeight - safeBottom) {
     isle.scrollIntoView({ block: 'nearest', behavior: 'auto' });
     await new Promise(requestAnimationFrame);
@@ -1534,7 +1536,7 @@ function renderHome() {
         </div></div>
       </fieldset>
       <fieldset class="setup-section learning-settings"><legend>${nauticalIcon('book')} Tes découvertes</legend>
-        <p>MS : lettres capitales et collections de 1 à 5.<br>GS : capitales, minuscules et collections de 1 à 10.</p><p>Image repère, lettre à écouter et aide à tout moment. Aucun chronomètre : chaque essai aide à apprendre.</p>
+        <p>MS : lettres capitales et collections de 1 à 5.<br>GS : capitales, minuscules et collections de 1 à 10.</p><p>Image repère, son à écouter et aide à tout moment. Aucun chronomètre : chaque essai aide à apprendre.</p>
         <div class="field"><span>Les épreuves</span>${seg('mode', [['mix', 'Tout explorer'], ['lecture', 'Les lettres'], ['maths', 'Je compte']])}</div>
       </fieldset>
       <fieldset class="setup-section crew-settings"><legend>${nauticalIcon('star')} Ton compagnon d’aventure</legend>
@@ -1549,7 +1551,7 @@ function renderHome() {
     </div>
     <div class="home-bottom"><button class="btn big go-btn">${themeText('Larguer les amarres !', 'Partir à l’aventure !')} ${nauticalIcon('arrow')}</button><p>Ton aventure est sauvegardée sur cet appareil.</p></div>
     </details>
-    <footer class="game-footer">${gameTitle()} <span>•</span> Un peu de magie, beaucoup de découvertes.<details><summary>Crédits des illustrations pédagogiques</summary><p>Pictogrammes Twemoji, Twitter et autres contributeurs, <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>.</p></details></footer>
+    <footer class="game-footer">${gameTitle()} <span>•</span> Un peu de magie, beaucoup de découvertes.<details><summary>Crédits des images et des sons</summary><p>Pictogrammes Twemoji, Twitter et autres contributeurs, <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>.</p><p>Sons phonétiques adaptés de Parle / Tingnova Inc. (CC BY 4.0) et Peter Isotalo (CC BY-SA 3.0). <a href="assets/phonemes/README.md" target="_blank" rel="noopener">Crédits et adaptations audio</a>.</p></details></footer>
   </section>`;
 
   app.querySelectorAll('[data-game-theme-choice]').forEach(button => button.addEventListener('click', () => {
@@ -1816,7 +1818,7 @@ function startWorld(w) {
   soundBtn.addEventListener('click', () => {
     const on = !(S.sound || S.voice);
     S.sound = on; S.voice = on; save(); paintSound();
-    if (!on && 'speechSynthesis' in window) speechSynthesis.cancel();
+    if (!on) { Phonemes.stop(); if ('speechSynthesis' in window) speechSynthesis.cancel(); }
     SFX.click();
   });
   document.getElementById('btn-map').addEventListener('click', confirmQuit);
@@ -1882,6 +1884,7 @@ function confirmQuit() {
 }
 
 function enterStep() {
+  Phonemes.stop();
   const { w } = RUN;
   const step = RUN.steps[RUN.index];
   const T = ROOM_TYPES[step.type];
@@ -1920,10 +1923,18 @@ function enterStep() {
   const instr = T.instruction(q);
   say(instr);
   RUN.greeted = true;
-  const introTimer = setTimeout(() => { if (el.isConnected) speak(T.listen ? T.listen(q) : instr); }, 300);
+  const replay = (force) => {
+    if (T.play) {
+      say(instr);
+      return T.play(q, { force, onError: message => say(message) });
+    }
+    return speak(T.replay ? T.replay(q) : bubbleText.textContent, { force });
+  };
+  const introTimer = setTimeout(() => { if (el.isConnected) { if (T.play) replay(false); else speak(T.listen ? T.listen(q) : instr); } }, 300);
   el.addEventListener('click', () => clearTimeout(introTimer), { once: true });
 
-  el.querySelector('.say').addEventListener('click', () => speak(T.replay ? T.replay(q) : bubbleText.textContent, { force: true }));
+  el.querySelector('.say').addEventListener('click', () => replay(true));
+  if (T.play) el.querySelector('.say').setAttribute('aria-label', 'Réécouter le son');
   hintBtn.addEventListener('click', () => {
     const hi = T.hint(q);
     profMood(el, 'think', 4000);
