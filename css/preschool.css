@@ -22,6 +22,12 @@
 .little-count-model > span { display: inline-flex; flex-direction: column; align-items: center; min-width: 32px; font-size: 30px; }
 .little-count-model b { font: bold 19px Andika, sans-serif; }
 .little-count-model .picture { width: 32px; height: 32px; }
+.little-dice-model { margin: 14px auto 4px; padding-top: 10px; border-top: 2px dashed #e7bc63; text-align: center; }
+.little-dice-model p { margin: 6px 0; }
+.little-dice-row { display: flex; justify-content: center; gap: 14px; padding: 4px 0 7px; }
+.little-die { display: block; width: 76px; height: 76px; color: #ffcf38; filter: drop-shadow(0 4px 0 #d99b24); }
+.little-die:nth-child(2) { color: #57dfcf; filter: drop-shadow(0 4px 0 #20a999); }
+.little-dice-total { color: #193b57; font: bold 24px Andika, sans-serif; }
 .little-check { display: flex; margin: 16px auto; min-height: 56px; }
 button:focus-visible { outline: 4px solid #195fc0; outline-offset: 5px; }
 @media (max-width: 480px) {

@@ -4,6 +4,19 @@
 const PRESCHOOL_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 const smallNumber = (n) => ['zéro', 'un', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf', 'dix'][n];
 
+function diceHintHTML(n) {
+  const layouts = {
+    1: [[50, 50]],
+    2: [[25, 25], [75, 75]],
+    3: [[25, 25], [50, 50], [75, 75]],
+    4: [[25, 25], [75, 25], [25, 75], [75, 75]],
+    5: [[25, 25], [75, 25], [50, 50], [25, 75], [75, 75]],
+    6: [[25, 25], [75, 25], [25, 50], [75, 50], [25, 75], [75, 75]],
+  };
+  const values = n <= 6 ? [n] : [6, n - 6];
+  return `<div class="little-dice-model"><p>Comme sur ${values.length === 1 ? 'un dé' : 'deux dés'}</p><div class="little-dice-row" role="img" aria-label="${n} points sur ${values.length === 1 ? `un dé de ${n}` : `deux dés : 6 et ${n - 6}`}">${values.map(value => `<svg class="little-die" viewBox="0 0 100 100" aria-hidden="true"><rect x="3" y="3" width="94" height="94" rx="20" fill="currentColor" stroke="#fff" stroke-width="6"/>${layouts[value].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="8" fill="#193b57"/>`).join('')}</svg>`).join('')}</div><p class="little-dice-total">${values.length === 2 ? `${values[0]} + ${values[1]} = ` : ''}<b>${n}</b></p></div>`;
+}
+
 const LETTER_CLUES = {
   A: ['abeille', '1f41d'], B: ['bateau', '26f5'], C: ['carotte', '1f955'],
   D: ['dauphin', '1f42c'], E: ['escargot', '1f40c'], F: ['fleur', '1f338'],
@@ -123,7 +136,7 @@ function registerPreschoolRooms() {
   const countHint = (q) => ({
     show: `${themeText('Touche chaque coquillage une seule fois.', 'Touche chaque œuf une seule fois.')} Le dernier nombre dit combien il y en a : ${q.n}.`,
     say: `Comptons ensemble. ${Array.from({ length: q.n }, (_, i) => smallNumber(i + 1)).join(', ')}. Il y a ${smallNumber(q.n)} ${countWord(q.n)}.`,
-    html: `<div class="little-count-model">${Array.from({ length: q.n }, (_, i) => `<span>${countToken()}<b>${i + 1}</b></span>`).join('')}</div><p>Il y en a <b>${q.n}</b> en tout.</p>`,
+    html: `<div class="little-count-model">${Array.from({ length: q.n }, (_, i) => `<span>${countToken()}<b>${i + 1}</b></span>`).join('')}</div><p>Il y en a <b>${q.n}</b> en tout.</p>${diceHintHTML(q.n)}`,
   });
   ROOM_TYPES.petitCompte = {
     subject: 'maths', make: numberQuestion,

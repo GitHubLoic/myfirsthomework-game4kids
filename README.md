@@ -18,6 +18,7 @@ Les activités MS / GS, les professeurs, les étoiles et les mondes débloqués 
 - **Moyenne section** : reconnaître les 26 lettres capitales, retrouver une lettre parmi deux choix à partir d’une consigne sonore et d’une image repère, dénombrer et construire des collections de 1 à 5.
 - **Grande section** : reconnaître les capitales, retrouver une capitale ou une minuscule à partir d’une consigne sonore et d’une image repère, choisir parmi trois réponses, dénombrer et construire des collections de 1 à 10.
 - **Je compte** : toucher chaque coquillage une seule fois pour l’énumérer, entendre le nombre, puis retrouver le cardinal ; remplir et vider les cases du bateau pour construire une collection.
+- **Aide aux quantités** : les objets numérotés sont complétés par des faces de dés : un dé de 1 à 6, puis deux dés de 7 à 10 (par exemple 6 + 2 pour 8).
 - **Les lettres** : entendre le début naturel du mot de l’image (« po… » pour pomme, « tor… » pour tortue), puis retrouver sa première lettre. Le bouton « Écouter le début » et celui de la bulle jouent un extrait court du même enregistrement que le bouton « Écouter le mot ». Aucune consonne n’est fabriquée, répétée ou mise en boucle. Les fichiers sont intégrés au jeu, sans synthèse vocale pour ces écoutes. Les débuts proches ne sont pas proposés ensemble ; le H silencieux reste expliqué dans l’aide.
 - **Tout explorer** : alterner les lettres et les nombres.
 
