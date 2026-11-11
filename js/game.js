@@ -571,7 +571,7 @@ async function sailToIsland(isle, frac = 1) {
   }
   const bw = el.offsetWidth;
   const tx = r.left + r.width / 2 - bw / 2;
-  const tb = innerHeight - r.bottom - el.offsetHeight * 0.22;
+  const tb = innerHeight - r.bottom - el.offsetHeight * (isDinoTheme() ? 0.55 : 0.22);
   const cur = el.getBoundingClientRect();
   const cx = cur.left;
   const cb = innerHeight - cur.bottom;
@@ -1518,7 +1518,7 @@ function renderHome() {
       <fieldset class="setup-section theme-settings"><legend>${nauticalIcon('compass')} Ton univers</legend>
         <div class="theme-picker" role="group" aria-label="Thème du jeu">
           <button type="button" class="theme-card ${!isDinoTheme() ? 'sel' : ''}" data-game-theme-choice="islands" aria-pressed="${!isDinoTheme()}"><img src="assets/marine/tropical.webp" alt="" width="160" height="120"><b>Les Îles</b><small>Bateau et océan</small></button>
-          <button type="button" class="theme-card ${isDinoTheme() ? 'sel' : ''}" data-game-theme-choice="dinosaurs" aria-pressed="${isDinoTheme()}"><img src="assets/dinosaurs/volcano.svg" alt="" width="160" height="120"><b>Les Dinosaures</b><small>Dino et volcans</small></button>
+          <button type="button" class="theme-card ${isDinoTheme() ? 'sel' : ''}" data-game-theme-choice="dinosaurs" aria-pressed="${isDinoTheme()}"><img src="assets/dinosaurs/volcano.webp" alt="" width="160" height="120"><b>Les Dinosaures</b><small>Dino et volcans</small></button>
         </div><small>Tu peux changer d’univers à tout moment. Tes étoiles sont conservées.</small>
       </fieldset>
       ${isDinoTheme() ? `<fieldset class="setup-section dino-settings"><legend>Ton petit dino</legend><div class="dino-preview">${boatSVG(S.boat)}</div><div class="dino-colors" role="group" aria-label="Couleur du dinosaure">${DINO_COLORS.map(([color, label]) => `<button type="button" class="swatch ${S.dino.body === color ? 'sel' : ''}" data-dino-color="${color}" style="background:${color}" aria-label="Dino ${label}" aria-pressed="${S.dino.body === color}"></button>`).join('')}</div></fieldset>` : ''}

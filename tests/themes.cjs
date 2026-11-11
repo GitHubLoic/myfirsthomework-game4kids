@@ -40,7 +40,7 @@ const assert=require('node:assert/strict');
       const type=await page.evaluate(()=>RUN.steps[RUN.index].type);types.add(type);
       assert.equal(await page.locator('#boat .dino-svg').count(),1);
       assert.ok(await page.evaluate(()=>getComputedStyle(document.querySelector('.scene-water-motion')).display==='none'));
-      assert.ok(await page.evaluate(()=>getComputedStyle(document.querySelector('.scene-ocean')).backgroundImage.includes('dinosaurs/jungle.svg')));
+      assert.ok(await page.evaluate(()=>getComputedStyle(document.querySelector('.scene-ocean')).backgroundImage.includes('dinosaurs/jungle.webp')));
       assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
       if(type==='petitCompte') assert.match(await page.locator('.bubble-text').innerText(),/œufs/);
       if(type==='petiteCollection') assert.match(await page.locator('.bubble-text').innerText(),/nid/);

@@ -9,7 +9,7 @@ On garde le bateau personnalisable, les cinq mers illustrées, les quatre profes
 Dans **Coin des parents → Ton univers**, choisir **Les Îles** ou **Les Dinosaures**. Le choix est sauvegardé sur l’appareil.
 
 - **Les Îles** : bateau personnalisable, océan, cinq mers et coquillages à compter.
-- **Les Dinosaures** : petit dino à la couleur personnalisable, vallée préhistorique, cinq régions à volcans et œufs à compter ou à placer dans un nid. Le dino marche vers le volcan choisi avant de valider la réponse.
+- **Les Dinosaures** : petit dino illustré à la couleur personnalisable, jungle dessin animé aux couleurs vives, cinq régions à volcans et œufs à compter ou à placer dans un nid. Le dino marche vers le volcan choisi avant de valider la réponse.
 
 Les activités MS / GS, les professeurs, les étoiles et les mondes débloqués sont partagés entre les thèmes : changer d’univers ne remet pas la progression à zéro. Les sauvegardes antérieures restent compatibles et démarrent dans le thème des îles.
 

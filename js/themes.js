@@ -14,7 +14,7 @@ const DINO_COLORS = [['#76b65c', 'Vert'], ['#68b6c2', 'Bleu'], ['#b08ad0', 'Viol
 const isDinoTheme = () => S.theme === 'dinosaurs';
 const themeText = (islands, dinosaurs) => isDinoTheme() ? dinosaurs : islands;
 const gameTitle = () => themeText('Les Petites Îles Magiques', 'Les Petits Dinos Magiques');
-const worldArtPath = (id) => themeText(`assets/marine/${id}.webp`, 'assets/dinosaurs/volcano.svg');
+const worldArtPath = (id) => themeText(`assets/marine/${id}.webp`, 'assets/dinosaurs/volcano.webp');
 const countWord = (n = 2) => themeText(`coquillage${n > 1 ? 's' : ''}`, `œuf${n > 1 ? 's' : ''}`);
 const countToken = () => themeText('🐚', '<img class="picture theme-count-token" src="assets/dinosaurs/egg.svg" alt="" aria-hidden="true">');
 
