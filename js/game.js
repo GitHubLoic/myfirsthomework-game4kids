@@ -1509,7 +1509,7 @@ function renderHome() {
     </div>
     <div class="little-adventures" aria-label="Choisis ton aventure">
       <div class="little-adventures-title"><span class="eyebrow">À TOI DE JOUER</span><h2>On découvre quoi ?</h2></div>
-      <button class="adventure-pick letters-pick" data-mode="lecture"><span class="adventure-toy" aria-hidden="true"><i>A</i><i>B</i><i>C</i></span><span><b>${themeText('L’île des lettres', 'Les volcans des lettres')}</b><small>Écoute et retrouve la lettre !</small></span><span class="adventure-arrow" aria-hidden="true">➜</span></button>
+      <button class="adventure-pick letters-pick" data-mode="lecture"><span class="adventure-toy" aria-hidden="true"><i>A</i><i>B</i><i>C</i></span><span><b>${themeText('L’île des lettres', 'Le repas des lettres')}</b><small>Écoute et retrouve la lettre !</small></span><span class="adventure-arrow" aria-hidden="true">➜</span></button>
       <button class="adventure-pick numbers-pick" data-mode="maths"><span class="adventure-toy" aria-hidden="true">${countToken()}<i>1 2 3</i></span><span><b>Le trésor à compter</b><small>${themeText('Touche, compte et embarque !', 'Touche, compte et explore !')}</small></span><span class="adventure-arrow" aria-hidden="true">➜</span></button>
     </div>
     <details class="parent-corner" id="preparation"><summary>${nauticalIcon('settings')} Le coin des parents <span>MS / GS, thème et compagnons</span></summary>

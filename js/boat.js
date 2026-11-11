@@ -47,11 +47,8 @@ function boatSVG(b, cls = '') {
   </svg>`;
 }
 
-// Illustration dessin animé dans le même cadre SVG : déplacement et orientation restent communs.
+// Une image HTML rend la teinte de façon identique dans l’aperçu et dans le jeu.
 function dinoSVG(colors, cls = '') {
   const hue = { '#76b65c': 0, '#68b6c2': 80, '#b08ad0': 155, '#e49c65': 290, '#df8193': 225 }[colors.body] || 0;
-  return `<svg class="boat-svg dino-svg ${cls}" viewBox="0 0 120 112" aria-hidden="true">
-    <ellipse cx="60" cy="106" rx="35" ry="4" fill="#174d43" opacity=".2"/>
-    <g class="dino-facing"><image class="dino-illustration" href="assets/dinosaurs/dino.webp" x="4" y="0" width="112" height="108" preserveAspectRatio="xMidYMax meet" style="filter:hue-rotate(${hue}deg)"/></g>
-  </svg>`;
+  return `<span class="boat-svg dino-svg ${cls}" aria-hidden="true"><span class="dino-facing"><img class="dino-illustration" src="assets/dinosaurs/dino.webp" alt="" draggable="false" width="1254" height="1254" style="filter:hue-rotate(${hue}deg)"></span></span>`;
 }

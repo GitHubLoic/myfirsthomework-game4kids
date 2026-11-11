@@ -15,6 +15,7 @@ const isDinoTheme = () => S.theme === 'dinosaurs';
 const themeText = (islands, dinosaurs) => isDinoTheme() ? dinosaurs : islands;
 const gameTitle = () => themeText('Les Petites Îles Magiques', 'Les Petits Dinos Magiques');
 const worldArtPath = (id) => themeText(`assets/marine/${id}.webp`, 'assets/dinosaurs/volcano.webp');
+const answerFoodHTML = () => isDinoTheme() ? '<span class="choice-food" aria-hidden="true"><img src="assets/dinosaurs/food.webp" alt="" draggable="false" width="1448" height="1086"></span>' : '';
 const countWord = (n = 2) => themeText(`coquillage${n > 1 ? 's' : ''}`, `œuf${n > 1 ? 's' : ''}`);
 const countToken = () => themeText('🐚', '<img class="picture theme-count-token" src="assets/dinosaurs/egg.svg" alt="" aria-hidden="true">');
 

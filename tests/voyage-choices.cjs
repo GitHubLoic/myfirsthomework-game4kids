@@ -34,7 +34,10 @@ const assert=require('node:assert/strict');
         await choices.nth(wrong).click();
         await page.waitForFunction(()=>document.querySelector('#boat').classList.contains('sailing'));
         assert.equal(await page.evaluate(()=>RUN.steps[0].solved),false);
-        await page.waitForTimeout(200);
+        await page.waitForFunction(before => {
+          const r = document.querySelector('#boat').getBoundingClientRect();
+          return Math.abs(r.y-before.y)>3 || Math.abs(r.x-before.x)>3;
+        }, before);
         const during=await page.locator('#boat').boundingBox();
         assert.ok(Math.abs(during.y-before.y)>3||Math.abs(during.x-before.x)>3);
         assert.equal(await choices.nth(wrong).isDisabled(),true);

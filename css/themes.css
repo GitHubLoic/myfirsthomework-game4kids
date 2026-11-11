@@ -73,3 +73,35 @@ body[data-game-theme="dinosaurs"] .little-choice { min-height: 165px; }
 @media (max-width: 600px) {
   body[data-game-theme="dinosaurs"] .little-choice { min-height: 150px; }
 }
+
+/* Le personnage reste devant les destinations et le décor, même au repos. */
+body[data-game-theme="dinosaurs"] .boat { z-index: 6; }
+.dino-svg { position: relative; aspect-ratio: 120 / 112; line-height: 0; }
+.dino-svg::after { content: ''; position: absolute; z-index: -1; bottom: 0; left: 20%; width: 60%; height: 7%; border-radius: 50%; background: #174d4333; }
+.dino-facing { display: block; width: 100%; height: 100%; transform-origin: 50% 50%; }
+.dino-illustration { display: block; width: 100%; height: 100%; object-fit: contain; }
+
+/* Les lettres et chiffres sont associés à un repas plutôt qu’à un volcan. */
+body[data-game-theme="dinosaurs"] .little-choice,
+body[data-game-theme="dinosaurs"] .little-choice:hover,
+body[data-game-theme="dinosaurs"] .little-choice.little-help,
+body[data-game-theme="dinosaurs"] .little-choice.little-correct { background: none; }
+.choice-food { position: absolute; left: 0; right: 0; bottom: 0; height: 70px; display: flex; justify-content: center; align-items: end; pointer-events: none; }
+.choice-food img { display: block; width: 100%; height: 100%; object-fit: contain; transform-origin: 50% 80%; }
+.food-eaten .choice-food img { animation: foodMunch .6s ease-in forwards; }
+body[data-game-theme="dinosaurs"] .boat.eating .dino-svg { animation: dinoMunch .18s ease-in-out 3 alternate; }
+@keyframes foodMunch { to { transform: scale(.15); opacity: 0; } }
+@keyframes dinoMunch { to { transform: translateY(4px) rotate(5deg) scale(1.03, .97); } }
+@media (max-width: 600px) {
+  .choice-food { height: 65px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .food-eaten .choice-food img { animation: none; opacity: 0; }
+}
+/* Les repas passent derrière le dino ; les panneaux restent au-dessus pour rester lisibles. */
+body[data-game-theme="dinosaurs"] .stage { z-index: auto; }
+body[data-game-theme="dinosaurs"] .little-choice { isolation: auto; }
+body[data-game-theme="dinosaurs"] .little-choice:hover { transform: none; }
+body[data-game-theme="dinosaurs"] .little-choice::before { z-index: 7; }
+body[data-game-theme="dinosaurs"] .letter-face { z-index: 8; }
+.choice-food { z-index: 1; }

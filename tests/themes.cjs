@@ -44,11 +44,11 @@ const assert=require('node:assert/strict');
       assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
       if(type==='petitCompte') assert.match(await page.locator('.bubble-text').innerText(),/œufs/);
       if(type==='petiteCollection') assert.match(await page.locator('.bubble-text').innerText(),/nid/);
-      if(type==='petiteLettre'||type==='petitePaire') assert.match(await page.locator('.bubble-text').innerText(),/volcan/);
-      // Vérifier le vrai chargement des images CSS, pas seulement leur URL.
+      if(type==='petiteLettre'||type==='petitePaire') assert.match(await page.locator('.bubble-text').innerText(),/nourrir le dino/);
       if(type!=='petiteCollection') {
-        const loaded=await page.locator('.little-choice').first().evaluate(e=>new Promise(resolve=>{const img=new Image();img.onload=()=>resolve(true);img.onerror=()=>resolve(false);img.src=getComputedStyle(e).backgroundImage.match(/url\(["']?(.*?)["']?\)/)[1];}));
-        assert.equal(loaded,true);
+        assert.equal(await page.locator('.choice-food img').count(), await page.locator('.little-choice').count());
+        assert.ok(await page.locator('.choice-food img').first().evaluate(img=>img.complete&&img.naturalWidth>0));
+        assert.equal(await page.locator('.little-choice').first().evaluate(e=>getComputedStyle(e).backgroundImage),'none');
       }
       if(i===0) {
         await page.waitForTimeout(600);

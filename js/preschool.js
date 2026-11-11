@@ -17,7 +17,7 @@ const LETTER_CLUES = {
   V: ['vache', '1f42e'], W: ['wagon', '1f683'], X: ['xylophone', 'xylophone'],
   Y: ['yoyo', '1fa80'], Z: ['zèbre', '1f993'],
 };
-const letterPrompt = (q) => `Écoute : la lettre ${letterName(q.answer)}, comme au début de ${LETTER_CLUES[q.answer][0]}. Retrouve ${q.lowercase ? 'la lettre minuscule' : 'la lettre'} ${themeText('sur une île', 'près d’un volcan')}.`;
+const letterPrompt = (q) => `Écoute : la lettre ${letterName(q.answer)}, comme au début de ${LETTER_CLUES[q.answer][0]}. Retrouve ${q.lowercase ? 'la lettre minuscule' : 'la lettre'} ${themeText('sur une île', 'pour nourrir le dino')}.`;
 
 // Le choix est une destination : on attend l’arrivée avant de valider la réponse.
 function wirePreschoolVoyage(choices, answer, api, onSuccess, onWrong) {
@@ -35,13 +35,20 @@ function wirePreschoolVoyage(choices, answer, api, onSuccess, onWrong) {
     boat.classList.add('answer-voyage');
     button.classList.add('sailing-to');
     const status = document.getElementById('sailing-status');
-    if (status) status.textContent = themeText('Le bateau rejoint l’île choisie.', 'Le dino rejoint le volcan choisi.');
+    if (status) status.textContent = themeText('Le bateau rejoint l’île choisie.', 'Le dino rejoint le repas choisi.');
     try {
       await sailToIsland(button, correct ? 1 : 0.65);
       if (!stillHere(run)) return;
       if (correct) {
         solved = true;
         button.classList.add('little-correct');
+        if (isDinoTheme()) {
+          boat.classList.add('eating');
+          button.classList.add('food-eaten');
+          await sleep(650);
+          if (!stillHere(run)) return;
+          boat.classList.remove('eating');
+        }
         onSuccess();
         api.success();
       } else {
@@ -54,10 +61,11 @@ function wirePreschoolVoyage(choices, answer, api, onSuccess, onWrong) {
       busy = false;
       choices.removeAttribute('aria-busy');
       button.classList.remove('sailing-to');
+      boat.classList.remove('eating');
       if (stillHere(run)) {
         buttons.forEach((b) => { b.disabled = solved; });
         if (!solved) boat.classList.remove('answer-voyage');
-        if (status) status.textContent = correct ? themeText('Le bateau est arrivé !', 'Le dino est arrivé !') : themeText('Le bateau est revenu. Essaie une autre île.', 'Le dino est revenu. Essaie un autre volcan.');
+        if (status) status.textContent = correct ? themeText('Le bateau est arrivé !', 'Miam ! Le dino a trouvé son repas !') : themeText('Le bateau est revenu. Essaie une autre île.', 'Le dino est revenu. Essaie une autre réponse.');
       }
     }
   }));
@@ -71,11 +79,11 @@ function registerPreschoolRooms() {
       const options = shuffle([answer, ...shuffle(PRESCHOOL_ALPHABET.filter((l) => l !== answer)).slice(0, level === 'GS' ? 2 : 1)]);
       return { answer, options, lowercase };
     },
-    instruction: () => `Écoute et retrouve la lettre ${themeText('sur une île', 'près d’un volcan')}.`,
+    instruction: () => `Écoute et retrouve la lettre ${themeText('sur une île', 'pour nourrir le dino')}.`,
     listen: letterPrompt,
     replay: (q) => letterName(q.answer),
     hint: (q) => ({
-      show: `Voici une aide : ${q.answer}${q.lowercase ? ` et ${q.answer.toLowerCase()}` : ''}. Retrouve cette lettre ${themeText('sur une île', 'près d’un volcan')}.`,
+      show: `Voici une aide : ${q.answer}${q.lowercase ? ` et ${q.answer.toLowerCase()}` : ''}. Retrouve cette lettre ${themeText('sur une île', 'pour nourrir le dino')}.`,
       say: `C'est la lettre ${letterName(q.answer)}. Regarde le modèle, puis retrouve la même forme.`,
       html: `<div class="little-letter">${q.lowercase ? `${q.answer} → ${q.answer.toLowerCase()}` : q.answer}</div>`,
     }),
@@ -86,7 +94,7 @@ function registerPreschoolRooms() {
       const choices = h('<div class="little-choices" role="group" aria-label="Choisis la lettre entendue"></div>');
       q.options.forEach((letter) => {
         const display = q.lowercase ? letter.toLowerCase() : letter;
-        choices.append(h(`<button class="little-choice little-letter" type="button" aria-label="Lettre ${letter}"><span class="letter-face">${display}</span></button>`));
+        choices.append(h(`<button class="little-choice little-letter" type="button" aria-label="Lettre ${letter}"><span class="letter-face">${display}</span>${answerFoodHTML()}</button>`));
       });
       wirePreschoolVoyage(choices, q.lowercase ? q.answer.toLowerCase() : q.answer, api,
         () => speak(`Oui ! La lettre ${letterName(q.answer)} !`),
@@ -133,7 +141,7 @@ function registerPreschoolRooms() {
       body.append(shellBox, status);
       const options = shuffle([q.n, ...shuffle(Array.from({ length: q.max }, (_, i) => i + 1).filter((n) => n !== q.n)).slice(0, S.level === 'GS' ? 2 : 1)]);
       const choices = h('<div class="little-choices" role="group" aria-label="Combien en tout ?"></div>');
-      options.forEach((n) => choices.append(h(`<button class="little-choice" type="button" aria-label="${n} ${countWord(n)}"><span class="letter-face">${n}</span></button>`)));
+      options.forEach((n) => choices.append(h(`<button class="little-choice" type="button" aria-label="${n} ${countWord(n)}"><span class="letter-face">${n}</span>${answerFoodHTML()}</button>`)));
       wirePreschoolVoyage(choices, q.n, api,
         () => speak(`Oui, ${smallNumber(q.n)} ${countWord(q.n)} en tout !`),
         () => {

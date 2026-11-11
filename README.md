@@ -9,7 +9,7 @@ On garde le bateau personnalisable, les cinq mers illustrées, les quatre profes
 Dans **Coin des parents → Ton univers**, choisir **Les Îles** ou **Les Dinosaures**. Le choix est sauvegardé sur l’appareil.
 
 - **Les Îles** : bateau personnalisable, océan, cinq mers et coquillages à compter.
-- **Les Dinosaures** : petit dino illustré à la couleur personnalisable, jungle dessin animé aux couleurs vives, cinq régions à volcans et œufs à compter ou à placer dans un nid. Le dino marche vers le volcan choisi avant de valider la réponse.
+- **Les Dinosaures** : petit dino illustré à la couleur personnalisable, jungle dessin animé aux couleurs vives, cinq régions à volcans et œufs à compter ou à placer dans un nid. Des portions de fruits et de feuilles remplacent les volcans sous les propositions : le dino avance vers la bonne réponse et mange sa portion avant la récompense. Les volcans restent dans le décor et sur la carte.
 
 Les activités MS / GS, les professeurs, les étoiles et les mondes débloqués sont partagés entre les thèmes : changer d’univers ne remet pas la progression à zéro. Les sauvegardes antérieures restent compatibles et démarrent dans le thème des îles.
 
@@ -51,6 +51,7 @@ node tests/preschool.cjs
 node tests/audio-letters.cjs
 node tests/voyage-choices.cjs
 node tests/themes.cjs
+node tests/dino-food-colors.cjs
 ```
 
 Le test vérifie les générateurs MS / GS, la séparation lettres / nombres, les erreurs et les aides, le comptage sans doublons, les collections, les récompenses, la sauvegarde et la largeur mobile. Par défaut, Chromium est attendu dans `/usr/bin/chromium` ; définir `CHROMIUM_PATH` pour utiliser une autre installation.
