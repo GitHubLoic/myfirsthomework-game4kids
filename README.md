@@ -4,6 +4,15 @@
 
 On garde le bateau personnalisable, les cinq mers illustrées, les quatre professeurs, les voyages en six escales et les coffres au trésor. Les activités sont conçues pour découvrir les lettres et les quantités avec un adulte, sans lecture autonome nécessaire.
 
+## Choisir un univers
+
+Dans **Coin des parents → Ton univers**, choisir **Les Îles** ou **Les Dinosaures**. Le choix est sauvegardé sur l’appareil.
+
+- **Les Îles** : bateau personnalisable, océan, cinq mers et coquillages à compter.
+- **Les Dinosaures** : petit dino à la couleur personnalisable, vallée préhistorique, cinq régions à volcans et œufs à compter ou à placer dans un nid. Le dino marche vers le volcan choisi avant de valider la réponse.
+
+Les activités MS / GS, les professeurs, les étoiles et les mondes débloqués sont partagés entre les thèmes : changer d’univers ne remet pas la progression à zéro. Les sauvegardes antérieures restent compatibles et démarrent dans le thème des îles.
+
 ## Découvertes
 
 - **Moyenne section** : reconnaître les 26 lettres capitales, retrouver une lettre parmi deux choix à partir d’une consigne sonore et d’une image repère, dénombrer et construire des collections de 1 à 5.
@@ -20,12 +29,13 @@ Les images repères sont disponibles pour les 26 lettres. Les aides sont disponi
 python3 serve.py
 ```
 
-Ouvrir <http://localhost:8765>. Aucun gestionnaire de paquets ni compilation nécessaire. L’enfant peut choisir directement L’île des lettres ou Le trésor à compter. Le coin des parents regroupe le choix MS / GS, le professeur et le bateau. Le prénom est facultatif. Les activités de lettres demandent d’écouter : utiliser le bouton Écouter. Si la synthèse vocale est indisponible, un adulte peut nommer l’image et la lettre, ou ouvrir l’aide.
+Ouvrir <http://localhost:8765>. Aucun gestionnaire de paquets ni compilation nécessaire. L’enfant peut choisir directement L’île des lettres ou Le trésor à compter. Le coin des parents regroupe le choix MS / GS, le thème, le professeur et la personnalisation du bateau ou du dino. Le prénom est facultatif. Les activités de lettres demandent d’écouter : utiliser le bouton Écouter. Si la synthèse vocale est indisponible, un adulte peut nommer l’image et la lettre, ou ouvrir l’aide.
 
 La synthèse vocale dépend des voix du navigateur et du système : une voix française est recommandée. Le test du son et le choix de voix se trouvent dans l’atelier. Les données sont enregistrées sur cet appareil dans `petitesIlesMagiques.v1`, séparément de la version CP / CE1. Les images et polices sont locales.
 
 ## Organisation
 
+- `js/themes.js`, `css/themes.css`, `assets/dinosaurs` : thèmes, textes, décors et personnage préhistorique.
 - `js/preschool.js` : quatre activités maternelle, noms des 26 lettres, modèles et manipulation.
 - `js/game.js` : accueil MS / GS, navigation, voyages, aides et récompenses ; les anciens moteurs CP / CE1 sont conservés pour l’historique mais exclus des voyages maternelle.
 - `css/preschool.css` : grandes cibles tactiles, modèles et collections.
@@ -40,6 +50,7 @@ Avec Node.js, Playwright et Chromium installés :
 node tests/preschool.cjs
 node tests/audio-letters.cjs
 node tests/voyage-choices.cjs
+node tests/themes.cjs
 ```
 
 Le test vérifie les générateurs MS / GS, la séparation lettres / nombres, les erreurs et les aides, le comptage sans doublons, les collections, les récompenses, la sauvegarde et la largeur mobile. Par défaut, Chromium est attendu dans `/usr/bin/chromium` ; définir `CHROMIUM_PATH` pour utiliser une autre installation.

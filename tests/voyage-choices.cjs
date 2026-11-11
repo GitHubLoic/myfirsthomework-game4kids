@@ -16,7 +16,9 @@ const assert=require('node:assert/strict');
           ROOM_TYPES[type].make=()=>type==='petitCompte'?{n:10,max:10}:{answer:'T',options:['X','T','H'],lowercase:false};
           enterStep();
         },type);
-        await page.waitForTimeout(650);
+        await page.locator('.room').evaluate(async el => {
+          await Promise.allSettled([...el.getAnimations(), ...el.parentElement.getAnimations()].map(animation => animation.finished));
+        });
         for(const face of await page.locator('.letter-face').all()) {
           const centered=await face.evaluate(e=>{
             const r=e.getBoundingClientRect(),p=e.parentElement.getBoundingClientRect(),tile=getComputedStyle(e.parentElement,'::before');

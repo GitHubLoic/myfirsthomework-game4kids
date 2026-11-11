@@ -80,11 +80,11 @@ button:focus-visible { outline: 4px solid #195fc0; outline-offset: 5px; }
 .little-model > .little-letter { display: inline-block; min-width: 110px; padding: 0 18px; margin-top: 10px; background: #fff; border: 3px solid #f3cc6e; border-radius: 26px; box-shadow: 0 5px #e7bb58; transform: rotate(-3deg); color: #c26338; }
 .little-model .hear-letter { display: flex; align-items: center; margin: 14px auto 0; box-shadow: none; background: none; border: 0; font-size: 14px; min-height: 42px; }
 .little-choices { width: 100%; gap: 16px; margin: 8px 0 12px; }
-.little-choice { min-width: 125px; min-height: 130px; padding: 10px 24px 30px; position: relative; border: 0; border-radius: 0; box-shadow: none; background: url('../assets/marine/tropical.webp') center bottom / 100% auto no-repeat; color: #193858; text-shadow: 0 2px #fff; font-size: 64px; }
+.little-choice { min-width: 125px; min-height: 130px; padding: 10px 24px 30px; position: relative; border: 0; border-radius: 0; box-shadow: none; background: var(--answer-art, url('../assets/marine/tropical.webp')) center bottom / 100% auto no-repeat; color: #193858; text-shadow: 0 2px #fff; font-size: 64px; }
 .little-choice::before { content: ''; position: absolute; z-index: -1; width: 78px; height: 78px; border: 3px solid #fff9e6; background: #fff4c7; border-radius: 24px; left: 50%; top: 3px; transform: translateX(-50%) rotate(5deg); box-shadow: 0 4px #d6a952; }
 .little-choice { isolation: isolate; }
-.little-choice:hover { background: url('../assets/marine/tropical.webp') center bottom / 100% auto no-repeat; transform: translateY(-5px); }
-.little-choice.little-help, .little-choice.little-correct { background: url('../assets/marine/tropical.webp') center bottom / 100% auto no-repeat; box-shadow: none; }
+.little-choice:hover { background: var(--answer-art, url('../assets/marine/tropical.webp')) center bottom / 100% auto no-repeat; transform: translateY(-5px); }
+.little-choice.little-help, .little-choice.little-correct { background: var(--answer-art, url('../assets/marine/tropical.webp')) center bottom / 100% auto no-repeat; box-shadow: none; }
 .little-choice.little-help::before { background: #ffe185; box-shadow: 0 0 0 5px #ffcc5799, 0 4px #d6a952; }
 .little-choice.little-correct::before { background: #b8edd0; border-color: #51a878; }
 .little-target { display: grid; place-items: center; width: 80px; height: 80px; margin: 12px auto; border-radius: 50%; background: #ffe18a; border: 4px solid #fff6ce; color: #84561c; box-shadow: 0 5px #d6a650; font-size: 52px; }

@@ -3,6 +3,7 @@
 // ================= Sauvegarde =================
 const STORE_KEY = 'petitesIlesMagiques.v1';
 const DEFAULTS = {
+  theme: 'islands', dino: { body: '#76b65c', belly: '#ffe3a3' },
   name: '', nameSay: '', level: 'MS', mode: 'mix', sound: true, voice: true, prof: 'bulle', profVoices: {}, worlds: {},
   boat: { hull: '#e63946', sail: '#ffffff', pattern: 'rayures' },
   dailyWords: DAILY_WORDS, wordStats: {},
@@ -14,7 +15,7 @@ function load() {
     const raw = localStorage.getItem(STORE_KEY);
     if (raw) {
       const saved = JSON.parse(raw);
-      return Object.assign(base, saved, { boat: Object.assign(base.boat, saved.boat) });
+      return Object.assign(base, saved, { boat: Object.assign(base.boat, saved.boat), dino: Object.assign(base.dino, saved.dino) });
     }
   } catch (e) { /* stockage indisponible : on garde les valeurs par défaut */ }
   return base;
@@ -230,6 +231,8 @@ const Confetti = (() => {
 
 // ================= Thème du monde =================
 function setTheme(w) {
+  applyGameTheme();
+  document.body.style.setProperty('--answer-art', `url("${new URL(worldArtPath(w ? w.id : 'tropical'), document.baseURI).href}")`);
   const st = document.body.style;
   st.setProperty('--bg1', w ? w.c1 : '#5b3cc4');
   st.setProperty('--bg2', w ? w.c2 : '#ff7eb3');
@@ -542,6 +545,7 @@ async function sailTo(x, b, scale = 1) {
   const dist = Math.hypot(x - r.left, b - (innerHeight - r.bottom));
   const dur = Math.min(2, Math.max(0.7, dist / 300));
   const deltaBottom = b - (innerHeight - r.bottom);
+  if (Math.abs(x - r.left) > 4) el.style.setProperty('--dino-facing', x > r.left ? 1 : -1);
   el.style.setProperty('--trail-angle', `${Math.atan2(x - r.left, deltaBottom) * 180 / Math.PI}deg`);
   el.style.setProperty('--tilt', `${x > r.left + 4 ? 7 : x < r.left - 4 ? -7 : 0}deg`);
   el.classList.add('sailing');
@@ -598,7 +602,7 @@ function islandsRow(count) {
 function islandEl(html, i) {
   return h(`<button class="island" style="--i:${i}" aria-label="Île ${i + 1}">
     <span class="isle-sign"><span class="isle-card">${html}</span><span class="isle-post"></span></span>
-    <span class="isle-land"><img class="answer-island-art" src="assets/marine/${RUN.w.id}.webp" alt="" aria-hidden="true" draggable="false"></span>
+    <span class="isle-land"><img class="answer-island-art" src="${worldArtPath(RUN.w.id)}" alt="" aria-hidden="true" draggable="false"></span>
   </button>`);
 }
 
@@ -1493,30 +1497,37 @@ function renderHome() {
     `<button data-v="${v}" class="${S[key] === v ? 'sel' : ''}">${label}</button>`).join('')}</div>`;
   document.getElementById('decor').innerHTML = '';
   app.innerHTML = `<section class="home art-home">
-    <header class="home-nav"><a class="home-brand" href="#">${nauticalIcon('compass')} <span>Les Petites Îles Magiques</span></a><button class="btn ghost home-map" type="button">Ma carte ${nauticalIcon('arrow')}</button></header>
+    <header class="home-nav"><a class="home-brand" href="#">${nauticalIcon('compass')} <span>${gameTitle()}</span></a><button class="btn ghost home-map" type="button">Ma carte ${nauticalIcon('arrow')}</button></header>
     <div class="home-hero">
       <div class="hero-copy"><span class="eyebrow">MON PREMIER VOYAGE • MS / GS</span>
-        <h1 class="title">À l’abordage,<br><span>petit capitaine !</span></h1>
+        <h1 class="title">${themeText('À l’abordage,', 'En avant,')}<br><span>${themeText('petit capitaine !', 'petit dino !')}</span></h1>
         <p class="subtitle">Des lettres à découvrir.<br>Des trésors à compter.</p>
-        <div class="home-actions"><button class="btn big go-btn">On embarque ! ${nauticalIcon('arrow')}</button><a class="prepare-link" href="#preparation">Coin des parents ${nauticalIcon('settings')}</a></div>
+        <div class="home-actions"><button class="btn big go-btn">${themeText('On embarque !', 'On explore !')} ${nauticalIcon('arrow')}</button><a class="prepare-link" href="#preparation">Coin des parents ${nauticalIcon('settings')}</a></div>
         <div class="hero-guide">${profSays(esc(profLine('hello')), 'happy')}</div>
       </div>
-      <div class="hero-art" aria-hidden="true"><img class="hero-island" src="assets/marine/tropical.webp" alt="" width="1448" height="1086"><div class="hero-boat">${boatSVG(S.boat)}</div><span class="hero-stamp">Cap sur les<br>découvertes ! ${nauticalIcon('star')}</span></div>
+      <div class="hero-art" aria-hidden="true"><img class="hero-island" src="${worldArtPath('tropical')}" alt="" width="1448" height="1086"><div class="hero-boat">${boatSVG(S.boat)}</div><span class="hero-stamp">Cap sur les<br>découvertes ! ${nauticalIcon('star')}</span></div>
     </div>
     <div class="little-adventures" aria-label="Choisis ton aventure">
       <div class="little-adventures-title"><span class="eyebrow">À TOI DE JOUER</span><h2>On découvre quoi ?</h2></div>
-      <button class="adventure-pick letters-pick" data-mode="lecture"><span class="adventure-toy" aria-hidden="true"><i>A</i><i>B</i><i>C</i></span><span><b>L’île des lettres</b><small>Écoute et retrouve la lettre !</small></span><span class="adventure-arrow" aria-hidden="true">➜</span></button>
-      <button class="adventure-pick numbers-pick" data-mode="maths"><span class="adventure-toy" aria-hidden="true">🐚<i>1 2 3</i></span><span><b>Le trésor à compter</b><small>Touche, compte et embarque !</small></span><span class="adventure-arrow" aria-hidden="true">➜</span></button>
+      <button class="adventure-pick letters-pick" data-mode="lecture"><span class="adventure-toy" aria-hidden="true"><i>A</i><i>B</i><i>C</i></span><span><b>${themeText('L’île des lettres', 'Les volcans des lettres')}</b><small>Écoute et retrouve la lettre !</small></span><span class="adventure-arrow" aria-hidden="true">➜</span></button>
+      <button class="adventure-pick numbers-pick" data-mode="maths"><span class="adventure-toy" aria-hidden="true">${countToken()}<i>1 2 3</i></span><span><b>Le trésor à compter</b><small>${themeText('Touche, compte et embarque !', 'Touche, compte et explore !')}</small></span><span class="adventure-arrow" aria-hidden="true">➜</span></button>
     </div>
-    <details class="parent-corner" id="preparation"><summary>${nauticalIcon('settings')} Le coin des parents <span>MS / GS, bateau et compagnons</span></summary>
-    <div class="preparation-head"><span class="eyebrow">L’ATELIER DU CAPITAINE</span><h2>On prépare ton voyage ?</h2><p>Choisis ton équipage et personnalise ton aventure.</p></div>
+    <details class="parent-corner" id="preparation"><summary>${nauticalIcon('settings')} Le coin des parents <span>MS / GS, thème et compagnons</span></summary>
+    <div class="preparation-head"><span class="eyebrow">${themeText('L’ATELIER DU CAPITAINE', 'L’ATELIER DES EXPLORATEURS')}</span><h2>On prépare ton voyage ?</h2><p>Choisis ton équipage et personnalise ton aventure.</p></div>
     <div class="setup">
-      <fieldset class="setup-section captain-settings"><legend>${nauticalIcon('compass')} Le capitaine, c’est toi</legend>
+      <fieldset class="setup-section theme-settings"><legend>${nauticalIcon('compass')} Ton univers</legend>
+        <div class="theme-picker" role="group" aria-label="Thème du jeu">
+          <button type="button" class="theme-card ${!isDinoTheme() ? 'sel' : ''}" data-game-theme-choice="islands" aria-pressed="${!isDinoTheme()}"><img src="assets/marine/tropical.webp" alt="" width="160" height="120"><b>Les Îles</b><small>Bateau et océan</small></button>
+          <button type="button" class="theme-card ${isDinoTheme() ? 'sel' : ''}" data-game-theme-choice="dinosaurs" aria-pressed="${isDinoTheme()}"><img src="assets/dinosaurs/volcano.svg" alt="" width="160" height="120"><b>Les Dinosaures</b><small>Dino et volcans</small></button>
+        </div><small>Tu peux changer d’univers à tout moment. Tes étoiles sont conservées.</small>
+      </fieldset>
+      ${isDinoTheme() ? `<fieldset class="setup-section dino-settings"><legend>Ton petit dino</legend><div class="dino-preview">${boatSVG(S.boat)}</div><div class="dino-colors" role="group" aria-label="Couleur du dinosaure">${DINO_COLORS.map(([color, label]) => `<button type="button" class="swatch ${S.dino.body === color ? 'sel' : ''}" data-dino-color="${color}" style="background:${color}" aria-label="Dino ${label}" aria-pressed="${S.dino.body === color}"></button>`).join('')}</div></fieldset>` : ''}
+      <fieldset class="setup-section captain-settings"><legend>${nauticalIcon('compass')} ${themeText('Le capitaine, c’est toi', 'L’explorateur, c’est toi')}</legend>
         <label class="field"><span>Ton prénom</span><input id="name" maxlength="14" autocomplete="off" value="${esc(S.name)}"></label>
         <div class="field"><span>Ça se prononce <small>(écris-le comme ça se dit)</small></span><div class="voice-pick"><input id="name-say" maxlength="20" autocomplete="off" value="${esc(S.nameSay)}" placeholder="${esc(S.name)}"><button class="seg-btn test-name" type="button">▶ Écouter</button></div></div>
         <div class="field"><span>Ta classe</span>${seg('level', [['MS', 'Moyenne section'], ['GS', 'Grande section']])}</div>
       </fieldset>
-      <fieldset class="setup-section boat-settings"><legend>${nauticalIcon('anchor')} Ton navire</legend>
+      <fieldset class="setup-section boat-settings" ${isDinoTheme() ? 'hidden' : ''}><legend>${nauticalIcon('anchor')} Ton navire</legend>
         <div class="boat-maker"><div class="boat-preview"><div class="mini-sea"></div>${boatSVG(S.boat)}</div><div class="boat-opts">
           <div class="opt-row" data-k="pattern"><em>Voile</em><span class="opt-list chips">${BOAT_OPTIONS.pattern.map(([v, l]) => `<button class="chip ${S.boat.pattern === v ? 'sel' : ''}" data-v="${v}">${l}</button>`).join('')}</span></div>
           ${[['hull', 'Coque'], ['sail', 'Tissu']].map(([k, l]) => `<div class="opt-row" data-k="${k}"><em>${l}</em><span class="opt-list swatches">${BOAT_OPTIONS[k].map((c) => `<button class="swatch ${S.boat[k] === c ? 'sel' : ''}" data-v="${c}" style="background:${c}" aria-label="${l} ${c}"></button>`).join('')}</span></div>`).join('')}
@@ -1536,11 +1547,23 @@ function renderHome() {
         <button class="seg-btn test-sound" type="button">${nauticalIcon('sound')} Tester le son</button><small class="sound-report hidden"></small>
       </fieldset>
     </div>
-    <div class="home-bottom"><button class="btn big go-btn">Larguer les amarres ! ${nauticalIcon('arrow')}</button><p>Ton aventure est sauvegardée sur cet appareil.</p></div>
+    <div class="home-bottom"><button class="btn big go-btn">${themeText('Larguer les amarres !', 'Partir à l’aventure !')} ${nauticalIcon('arrow')}</button><p>Ton aventure est sauvegardée sur cet appareil.</p></div>
     </details>
-    <footer class="game-footer">Les Petites Îles Magiques <span>•</span> Un peu de magie, beaucoup de découvertes.<details><summary>Crédits des illustrations pédagogiques</summary><p>Pictogrammes Twemoji, Twitter et autres contributeurs, <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>.</p></details></footer>
+    <footer class="game-footer">${gameTitle()} <span>•</span> Un peu de magie, beaucoup de découvertes.<details><summary>Crédits des illustrations pédagogiques</summary><p>Pictogrammes Twemoji, Twitter et autres contributeurs, <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>.</p></details></footer>
   </section>`;
 
+  app.querySelectorAll('[data-game-theme-choice]').forEach(button => button.addEventListener('click', () => {
+    S.theme = button.dataset.gameThemeChoice; save(); renderHome();
+    app.querySelector('.parent-corner').open = true;
+    app.querySelector(`[data-game-theme-choice="${S.theme}"]`).focus({ preventScroll: true });
+    app.querySelector('.theme-settings').scrollIntoView({ block: 'nearest' });
+  }));
+  app.querySelectorAll('[data-dino-color]').forEach(button => button.addEventListener('click', () => {
+    S.dino.body = button.dataset.dinoColor; save();
+    app.querySelectorAll('[data-dino-color]').forEach(b => { b.classList.toggle('sel', b === button); b.setAttribute('aria-pressed', String(b === button)); });
+    app.querySelector('.dino-preview').innerHTML = boatSVG(S.boat);
+    app.querySelector('.hero-boat').innerHTML = boatSVG(S.boat);
+  }));
   app.querySelectorAll('.adventure-pick').forEach((button) => button.addEventListener('click', () => { S.mode = button.dataset.mode; save(); SFX.good(); renderMap(); }));
   app.querySelector('.prepare-link').addEventListener('click', () => { app.querySelector('.parent-corner').open = true; });
   app.querySelector('#name').addEventListener('input', (e) => { S.name = e.target.value.trim(); S.nameSay = ''; save();
@@ -1653,12 +1676,12 @@ function renderMap() {
   app.innerHTML = `<section class="map illustrated-map">
     <header class="map-head">
       <button class="icon-btn" id="btn-home" title="Réglages">⚙️</button>
-      <div class="hello">Ahoy ${esc(S.name || 'moussaillon')} !</div>
+      <div class="hello">${themeText('Ahoy', 'Bonjour')} ${esc(S.name || themeText('moussaillon', 'petit explorateur'))} !</div>
       <div class="star-count">⭐ ${totalStars()} <span>étoiles</span></div>
     </header>
-    <div class="chart-title"><h1>Les Petites Îles <span>Magiques</span></h1><span class="title-star" aria-hidden="true">★</span></div>
-    <p class="chart-direction">Départ au niveau 1, puis on remonte les îles ↑</p>
-    <div class="archipelago" aria-label="Carte des cinq mers">
+    <div class="chart-title"><h1>${themeText('Les Petites Îles', 'Les Petits Dinos')} <span>Magiques</span></h1><span class="title-star" aria-hidden="true">★</span></div>
+    <p class="chart-direction">${themeText('Départ au niveau 1, puis on remonte les îles ↑', 'Départ au niveau 1, puis on explore les volcans ↑')}</p>
+    <div class="archipelago" aria-label="${themeText('Carte des cinq mers', 'Carte des cinq régions des dinos')}">
     ${chartScenery()}
     <div class="chart-boat" aria-hidden="true">${boatSVG(S.boat)}</div>
     <div class="worlds">${WORLDS.map((w, i) => {
@@ -1675,7 +1698,7 @@ function renderMap() {
       </button>`;
     }).join('')}</div>
     </div>
-    <div class="chart-crew">${chartProfessor()}<p class="crew-bubble">Prêt,<br>capitaine ?</p></div>
+    <div class="chart-crew">${chartProfessor()}<p class="crew-bubble">Prêt,<br>${themeText('capitaine', 'petit dino')} ?</p></div>
     <div class="chart-departure"><button class="btn big chart-continue" id="btn-continue">${nextIdx < 0 ? 'Repartir à l’aventure' : 'Continuer l’aventure'} <span aria-hidden="true">➜</span></button><span class="chart-destination">Cap sur ${CHART_LABELS[destination.id]} !</span></div>
     <p class="chart-notice" role="status" aria-live="polite"></p>
 
@@ -1716,8 +1739,8 @@ function buildZone(z) {
   const world = RUN ? RUN.w.id : 'tropical';
   return h(`<div class="zone illustrated-zone world-${world}" style="--sky1:${z.sky[0]};--sky2:${z.sky[1]};--sea1:${z.sea[0]};--sea2:${z.sea[1]}">
     <div class="scene-ocean"></div><div class="scene-water-motion" aria-hidden="true"></div><div class="scene-light"></div>
-    <img class="scenic-island scenic-left" src="assets/marine/${world}.webp" alt="" aria-hidden="true">
-    <img class="scenic-island scenic-right" src="assets/marine/${world}.webp" alt="" aria-hidden="true">
+    <img class="scenic-island scenic-left" src="${worldArtPath(world)}" alt="" aria-hidden="true">
+    <img class="scenic-island scenic-right" src="${worldArtPath(world)}" alt="" aria-hidden="true">
     <div class="scene-sparkles" aria-hidden="true"></div>
   </div>`);
 }
@@ -1744,7 +1767,7 @@ async function showStepBanner() {
   const last = RUN.index >= RUN.steps.length;
   const el = h(`<div class="room-banner">
     <small>${last ? '🎁 Dernière étape' : `Étape ${RUN.index + 1} sur ${RUN.steps.length}`}</small>
-    <b>${last ? 'L’île au trésor' : RUN.steps[RUN.index].name}</b>
+    <b>${last ? themeText('L’île au trésor', 'Le volcan aux trésors') : RUN.steps[RUN.index].name}</b>
   </div>`);
   document.body.append(el);
   SFX.magic();
@@ -1753,6 +1776,7 @@ async function showStepBanner() {
 }
 
 function startWorld(w) {
+  applyGameTheme();
   const run = {
     w,
     steps: buildSequence(S.mode, STEPS_PER_WORLD).map((type, i) => ({ type, name: w.steps[i] })),
@@ -1764,7 +1788,7 @@ function startWorld(w) {
   app.innerHTML = `<section class="voyage-screen marine-voyage theme-${w.id}">
     <div id="zone-wrap"></div>
     <header class="topbar">
-      <button class="icon-btn" id="btn-map" title="Carte des mers" aria-label="Retour à la carte des mers">${nauticalIcon('compass')}</button>
+      <button class="icon-btn" id="btn-map" title="Carte" aria-label="Retour à la carte">${nauticalIcon('compass')}</button>
       <div class="track" id="track"></div>
       <div id="streak"></div>
       <div class="star-count" id="run-stars">${nauticalIcon('star')} 0</div>
@@ -1783,7 +1807,7 @@ function startWorld(w) {
   document.getElementById('track').innerHTML =
     '<div class="track-line"><div class="track-fill"></div></div>' +
     run.steps.map((_, i) => `<div class="node" style="left:${(i / n) * 100}%">${i + 1}</div>`).join('') +
-    `<div class="node chest-node" style="left:100%">🏝️</div><div class="track-avatar" style="left:0%">${boatSVG(S.boat)}</div>`;
+    `<div class="node chest-node" style="left:100%">${themeText('🏝️', '🌋')}</div><div class="track-avatar" style="left:0%">${boatSVG(S.boat)}</div>`;
   updateTrack(false);
 
   const soundBtn = document.getElementById('btn-sound');
@@ -1844,7 +1868,7 @@ function renderStreak() {
 function confirmQuit() {
   SFX.click();
   const ov = h(`<div class="overlay" role="dialog" aria-modal="true" aria-label="Quitter le voyage"><div class="confirm-card"><div class="dialog-emblem">${nauticalIcon('compass')}</div>
-    <h3>Retourner à la carte ?<br><small>Tu devras recommencer cette mer.</small></h3>
+    <h3>Retourner à la carte ?<br><small>${themeText('Tu devras recommencer cette mer.', 'Tu devras recommencer cette région.')}</small></h3>
     <div class="row"><button class="btn go stay">Je continue ! 💪</button><button class="btn ghost leave">Oui, quitter</button></div>
   </div></div>`);
   ov.querySelector('.stay').addEventListener('click', () => ov.remove());
@@ -1866,7 +1890,7 @@ function enterStep() {
   step.solved = false;
 
   const el = h(`<div class="room" data-subject="${T.subject}">
-    <div class="exercise-meta"><span>${nauticalIcon(T.subject === 'lecture' ? 'book' : 'compass')} ${T.subject === 'lecture' ? 'L’escale des lettres' : 'L’escale des nombres'}</span><span>${RUN.index + 1} / ${RUN.steps.length}</span></div>
+    <div class="exercise-meta"><span>${nauticalIcon(T.subject === 'lecture' ? 'book' : 'compass')} ${T.subject === 'lecture' ? themeText('L’escale des lettres', 'Les lettres des dinos') : themeText('L’escale des nombres', 'Les nombres des dinos')}</span><span>${RUN.index + 1} / ${RUN.steps.length}</span></div>
     <div class="guide">
       <span class="guide-face prof-face">${profSVG()}</span>
       <div class="bubble">
@@ -1986,7 +2010,7 @@ function showBravo(stars) {
     <p class="bravo-sub">${sub} ${esc(profLine('bravo'))}</p>
     <span class="bravo-prof">${profSVG('happy')}</span>
     ${RUN.streak >= 3 ? `<p class="bravo-streak">🔥 ${RUN.streak} étapes d’affilée sans erreur !</p>` : ''}
-    <button class="btn big go pulse next">${isLast ? 'Vers l’île au trésor ! 🏝️' : 'On met les voiles ! ⛵'}</button>
+    <button class="btn big go pulse next">${isLast ? themeText('Vers l’île au trésor ! 🏝️', 'Vers le volcan aux trésors !') : themeText('On met les voiles ! ⛵', 'On continue, petit dino !')}</button>
   </div></div>`);
   document.body.append(ov);
   for (let i = 0; i < stars; i++) setTimeout(() => SFX.star(i), 300 + i * 280);
@@ -2029,7 +2053,7 @@ function renderTreasure() {
     <span class="eyebrow treasure-kicker">LE TRÉSOR DU VOYAGE</span><h2>Une belle aventure,<br>un trésor bien mérité !</h2>
     <p class="tap-msg">Touche le coffre pour l’ouvrir 👇</p>
     <div class="treasure-isle" style="--g1:${land.g1};--g2:${land.g2};--top:${land.top}">
-      <img class="treasure-shore" src="assets/marine/${w.id}.webp" alt="" aria-hidden="true">
+      <img class="treasure-shore" src="${worldArtPath(w.id)}" alt="" aria-hidden="true">
       <button class="chest idle" aria-label="Ouvrir le coffre">
         <img class="chest-art chest-closed" src="assets/marine/chest-closed.webp" alt="" width="1448" height="1086"><img class="chest-art chest-open" src="assets/marine/chest-open.webp" alt="" width="1448" height="1086"><span class="chest-rays"></span>
         <span class="chest-reward">${w.reward}</span>
@@ -2046,7 +2070,7 @@ function renderTreasure() {
   stage.replaceChildren(el);
   stage.classList.remove('away');
   scrollTo(0, 0);
-  speak('Tu es arrivée sur l’île au trésor ! Touche le coffre pour l’ouvrir !');
+  speak(themeText('Tu es arrivé sur l’île au trésor ! Touche le coffre pour l’ouvrir !', 'Tu es arrivé au volcan aux trésors ! Touche le coffre pour l’ouvrir !'));
   RUN.busy = true;
   sleep(400).then(() => sailToIsland(el.querySelector('.treasure-isle'), 0.85));
 
@@ -2078,12 +2102,12 @@ function renderTreasure() {
       <div class="card treasure-record"><span class="eyebrow">DANS TON CARNET DE VOYAGE</span>
         <div class="total">${nauticalIcon('star')} ${RUN.stars} <small>/ ${max}</small></div>
         ${RUN.stars > prev && wasDone ? '<div>🏅 Nouveau record !</div>' : ''}
-        ${unlockedNow ? `<div>🔓 Nouvelle mer ouverte : ${next.emoji} ${next.name} !</div>` : ''}
-        ${!next && !wasDone ? '<div>🏆 Tu as exploré toutes les mers ! Capitaine !</div>' : ''}
+        ${unlockedNow ? `<div>🔓 ${themeText('Nouvelle mer ouverte', 'Nouvelle région ouverte')} : ${next.emoji} ${next.name} !</div>` : ''}
+        ${!next && !wasDone ? `<div>🏆 ${themeText('Tu as exploré toutes les mers ! Capitaine !', 'Tu as exploré tous les volcans ! Bravo, petit dino !')}</div>` : ''}
       </div>
       <div class="row">
         <button class="btn ghost again">↺ Refaire ce voyage</button>
-        <button class="btn go big pulse to-map">Carte des mers 🗺️</button>
+        <button class="btn go big pulse to-map">${themeText('Carte des mers', 'Carte des volcans')} 🗺️</button>
       </div>`;
     setTimeout(() => res.classList.remove('hidden'), 1300);
     res.querySelector('.again').addEventListener('click', () => { SFX.click(); startWorld(w); });

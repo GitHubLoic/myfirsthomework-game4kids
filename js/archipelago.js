@@ -2,7 +2,7 @@
 const CHART_LABELS = { tropical: 'Tropiques', pirates: 'Pirates', ice: 'Glaces', candy: 'Bonbons', stars: 'Étoiles' };
 
 function islandArt(id) {
-  return `<img class="island-art" src="assets/marine/${id}.webp" alt="" width="1448" height="1086" decoding="async" draggable="false">`;
+  return `<img class="island-art" src="${worldArtPath(id)}" alt="" width="1448" height="1086" decoding="async" draggable="false">`;
 }
 
 function chartScenery() {

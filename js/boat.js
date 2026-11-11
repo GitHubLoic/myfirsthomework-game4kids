@@ -3,6 +3,7 @@
 let boatUid = 0;
 
 function boatSVG(b, cls = '') {
+  if (isDinoTheme()) return dinoSVG(S.dino, cls);
   const { hull, sail, pattern } = b;
   const id = `bt${++boatUid}`;
   const mainSail = 'M63 14 Q92 40 100 72 L63 72 Z';
@@ -44,4 +45,26 @@ function boatSVG(b, cls = '') {
       <ellipse class="m-oops" cx="60" cy="98" rx="2.6" ry="3" fill="#8a3b3b"/>
     </g>
   </svg>`;
+}
+
+// Le même moteur de déplacement anime le dino, avec des pattes au lieu du sillage.
+function dinoSVG(colors, cls = '') {
+  const { body, belly } = colors;
+  return `<svg class="boat-svg dino-svg ${cls}" viewBox="0 0 120 112" aria-hidden="true"><g class="dino-facing">
+    <ellipse cx="61" cy="105" rx="43" ry="5" fill="#294d31" opacity=".18"/>
+    <path class="dino-tail" d="M49 65Q24 83 7 59q-1 30 38 31Z" fill="${body}" stroke="#35533b" stroke-width="2.5"/>
+    <path d="m43 63-6-11 14 3 1-13 11 6 7-13 7 9" fill="${belly}" stroke="#35533b" stroke-width="2" stroke-linejoin="round"/>
+    <g class="dino-leg back-leg"><path d="M48 82v16l-7 2q-6 8 9 8h13V85Z" fill="${body}" stroke="#35533b" stroke-width="2.5"/></g>
+    <path d="M37 71q1-24 29-26l8-16q2-15 21-15 20 0 21 17v18q0 14-25 13l-4 18q-6 17-27 17-24 0-23-26Z" fill="${body}" stroke="#35533b" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M85 54q17 10 25-4-7 1-15-3Z" fill="${belly}"/>
+    <ellipse cx="69" cy="76" rx="18" ry="18" fill="${belly}"/>
+    <g class="dino-leg front-leg"><path d="M72 87v12l-7 2q-6 8 9 8h13V85" fill="${body}" stroke="#35533b" stroke-width="2.5" stroke-linejoin="round"/><path d="M76 104v4m6-4v4" stroke="#fff3cf" stroke-width="2"/></g>
+    <path class="dino-arm" d="M84 65q15 3 16-4m-4 1 3 3" fill="none" stroke="#35533b" stroke-width="4" stroke-linecap="round"/>
+    <ellipse cx="91" cy="33" rx="7" ry="9" fill="#fff9e7"/><circle cx="94" cy="33" r="4" fill="#263f32"/><circle cx="95" cy="31" r="1.5" fill="white"/>
+    <circle cx="109" cy="39" r="1.7" fill="#35533b"/><circle cx="87" cy="48" r="4" fill="#eea285" opacity=".8"/>
+    <path class="m-smile" d="M96 49q8 4 14-1" fill="none" stroke="#35533b" stroke-width="2" stroke-linecap="round"/>
+    <path class="m-happy" d="M95 48q9 12 16-1Z" fill="#864d45"/>
+    <ellipse class="m-oops" cx="103" cy="50" rx="3" ry="4" fill="#864d45"/>
+    <g fill="#426847" opacity=".3"><ellipse cx="47" cy="70" rx="4" ry="6"/><circle cx="59" cy="57" r="4"/><circle cx="76" cy="49" r="3"/></g>
+  </g></svg>`;
 }
